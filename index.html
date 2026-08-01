@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kumpulan Doa Digital Pro - Cyber Islamic Edition</title>
+    
+    <!-- CSS & Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Scripts (html2canvas & Three.js) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        arabic: ['Amiri', 'serif'],
+                        'mono-tech': ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .dark .custom-scroll::-webkit-scrollbar-thumb { background: #475569; }
+
+        html.dark body { background-color: #020617; color: #f8fafc; }
+
+        .static-glow { box-shadow: 0 0 15px rgba(20, 184, 166, 0.2); }
+        .dark .static-glow { box-shadow: 0 0 20px rgba(20, 184, 166, 0.15), inset 0 0 10px rgba(20, 184, 166, 0.05); }
+
+        @keyframes cyber-glow {
+            0%, 100% { box-shadow: 0 0 15px rgba(20, 184, 166, 0.2), inset 0 0 10px rgba(20, 184, 166, 0.1); border-color: rgba(20, 184, 166, 0.3); }
+            50% { box-shadow: 0 0 25px rgba(234, 179, 8, 0.4), inset 0 0 15px rgba(234, 179, 8, 0.15); border-color: rgba(234, 179, 8, 0.6); }
+        }
+        .animate-cyber-glow { animation: cyber-glow 4s infinite ease-in-out; }
+
+        @keyframes gold-glow-box {
+            0%, 100% { box-shadow: 0 0 15px rgba(234, 179, 8, 0.3); border-color: rgba(234, 179, 8, 0.5); }
+            50% { box-shadow: 0 0 30px rgba(234, 179, 8, 0.7); border-color: rgba(234, 179, 8, 0.9); }
+        }
+        .animate-gold-glow-box { animation: gold-glow-box 3s infinite ease-in-out; }
+
+        .mic-listening {
+            animation: pulse 1s infinite;
+            background-color: rgba(239, 68, 68, 0.2) !important;
+            border-color: #ef4444 !important;
+            color: #ef4444 !important;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.6) !important;
+        }
+
+        /* 3D Orbit Classes */
+        .orbit-container { perspective: 1200px; transform-style: preserve-3d; }
+        .orbit-ring-1, .orbit-ring-2, .orbit-ring-3 {
+            position: absolute; border-radius: 50%; border: 2px solid transparent; transform-style: preserve-3d;
+        }
+        .orbit-ring-1 { inset: -25px; border-top-color: #06b6d4; border-bottom-color: #3b82f6; box-shadow: 0 0 15px rgba(6, 182, 212, 0.3); animation: spin3D1 3s linear infinite; }
+        .orbit-ring-2 { inset: -15px; border-left-color: #10b981; border-right-color: #eab308; box-shadow: 0 0 15px rgba(16, 185, 129, 0.3); animation: spin3D2 4s linear infinite; }
+        .orbit-ring-3 { inset: -35px; border-top-color: #8b5cf6; border-bottom-color: transparent; animation: spin3D3 5s linear infinite; }
+        @keyframes spin3D1 { 0% { transform: rotateX(65deg) rotateY(0deg) rotateZ(0deg); } 100% { transform: rotateX(65deg) rotateY(360deg) rotateZ(360deg); } }
+        @keyframes spin3D2 { 0% { transform: rotateX(45deg) rotateY(45deg) rotateZ(0deg); } 100% { transform: rotateX(45deg) rotateY(45deg) rotateZ(-360deg); } }
+        @keyframes spin3D3 { 0% { transform: rotateX(75deg) rotateY(-45deg) rotateZ(0deg); } 100% { transform: rotateX(75deg) rotateY(-45deg) rotateZ(360deg); } }
+        
+        .truncate-2-lines { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; white-space: normal; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300 min-h-screen flex flex-col font-sans relative pb-32">
+
+    <!-- 3D Earth Background Container -->
+    <div id="earth-3d-bg" class="fixed inset-0 z-[-1] pointer-events-none opacity-15 dark:opacity-30 transition-opacity duration-500"></div>
+
+    <!-- App Loader Futuristik -->
+    <div id="globalAppLoader" class="fixed inset-0 z-[10000] bg-[#020617] flex flex-col items-center justify-center transition-opacity duration-700 ease-in-out overflow-hidden">
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-teal-900/20 via-[#020617] to-[#020617] pointer-events-none"></div>
+        <div class="relative flex flex-col items-center z-10 text-center w-full max-w-md px-6">
+            <div class="mb-14 flex flex-col items-center justify-center bg-slate-900/60 backdrop-blur-lg border border-cyan-500/40 rounded-2xl p-4 md:p-5 shadow-[0_0_30px_rgba(6,182,212,0.15)] transform transition-transform hover:scale-105">
+                <span id="loader-date" class="text-emerald-400 font-bold text-[11px] sm:text-xs tracking-widest uppercase font-mono-tech mb-1.5 drop-shadow-md">Memuat Hari...</span>
+                <span id="loader-time" class="text-4xl sm:text-5xl font-black font-mono-tech tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-300 to-purple-400 filter drop-shadow-[0_0_12px_rgba(34,211,238,0.7)]">00:00:00</span>
+            </div>
+
+            <div class="relative w-28 h-28 md:w-32 md:h-32 mb-10 flex items-center justify-center orbit-container">
+                <div class="orbit-ring-1"></div>
+                <div class="orbit-ring-2"></div>
+                <div class="orbit-ring-3"></div>
+                <div class="absolute inset-0 rounded-full bg-slate-900/80 backdrop-blur-md border border-yellow-500/60 shadow-[0_0_40px_rgba(234,179,8,0.4)] flex items-center justify-center overflow-hidden">
+                    <i class="fa-solid fa-hands-praying text-yellow-400 text-4xl md:text-5xl relative z-10 animate-pulse drop-shadow-[0_0_15px_rgba(234,179,8,0.8)]"></i>
+                </div>
+            </div>
+            
+            <h2 class="font-arabic text-3xl md:text-4xl text-yellow-500 mb-3 tracking-wide" dir="rtl">الدعاء مخ العبادة</h2>
+            <p id="loaderStatusText" class="font-mono-tech text-[10px] md:text-xs text-cyan-400 tracking-widest animate-pulse mt-2">&gt;_ MEMUAT DATABASE DOA LENGKAP...</p>
+            
+            <div class="w-64 md:w-72 h-1.5 bg-slate-800 mt-6 rounded-full overflow-hidden relative shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+                <div id="loaderProgressBar" class="h-full bg-gradient-to-r from-cyan-500 via-teal-400 to-yellow-500 w-0 transition-all duration-300 relative">
+                    <div class="absolute top-0 right-0 bottom-0 w-4 bg-white/50 blur-sm animate-pulse"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header / Navigation -->
+    <header class="bg-teal-600/95 dark:bg-slate-900/90 backdrop-blur-md text-white shadow-md sticky top-0 z-40 border-b border-teal-500/30 dark:border-slate-800 transition-colors">
+        <div class="container mx-auto px-4 py-3 flex flex-col lg:flex-row justify-between items-center gap-4 lg:gap-3 relative">
+            
+            <!-- Left Side -->
+            <div class="flex items-center justify-center lg:justify-start gap-3 w-full lg:w-1/3 cursor-pointer z-10" onclick="showDoaList()" title="Kembali ke Indeks">
+                <span class="text-2xl lg:text-3xl"><i class="fa-solid fa-hands-praying text-yellow-400"></i></span>
+                <div class="text-center lg:text-left">
+                    <h1 class="text-lg md:text-xl font-bold tracking-wide flex items-center justify-center lg:justify-start gap-2">
+                        Doa Digital Pro 
+                        <span class="text-[9px] md:text-xs bg-teal-700 dark:bg-slate-800 px-1.5 py-0.5 rounded border border-teal-500/40 text-yellow-400 font-sans font-bold">Versi Ultimate</span>
+                    </h1>
+                    <p class="text-[10px] md:text-xs text-teal-100 opacity-80 dark:text-slate-400 font-mono-tech">Multi-Database & AI Copilot</p>
+                </div>
+            </div>
+            
+            <!-- Center Side: Day & Time -->
+            <div class="flex flex-col items-center justify-center w-full lg:w-1/3 order-first lg:order-none z-10">
+                <div class="bg-slate-950/80 border-2 border-cyan-400/80 px-6 py-2 rounded-full shadow-[0_0_15px_rgba(34,211,238,0.5)] animate-pulse flex flex-col items-center justify-center w-full max-w-[280px]">
+                    <span id="dashboard-date" class="text-emerald-400 font-bold text-[11px] sm:text-sm tracking-widest uppercase font-mono-tech">Memuat hari...</span>
+                    <span id="dashboard-time" class="text-cyan-400 font-black text-2xl sm:text-3xl font-mono-tech tracking-widest drop-shadow-[0_0_8px_rgba(34,211,238,0.8)] mt-0.5">00:00:00</span>
+                </div>
+            </div>
+            
+            <!-- Right Side -->
+            <div class="flex flex-wrap items-center justify-center lg:justify-end gap-2 w-full lg:w-1/3 z-10">
+                <a href="https://adikds.github.io/Al-Quran-Karim/" target="_blank" class="flex-1 md:flex-none justify-center bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] md:text-xs font-bold px-3 py-2 rounded-xl border border-emerald-500/50 shadow-xs cursor-pointer flex items-center gap-1.5 transition-colors">
+                    <i class="fa-solid fa-book-quran"></i> <span class="hidden sm:inline">AL-QUR'AN</span>
+                </a>
+                
+                <button onclick="openCreatorModal()" class="flex-1 md:flex-none justify-center bg-amber-500 hover:bg-amber-600 dark:bg-amber-600 dark:hover:bg-amber-700 text-slate-950 dark:text-white text-[10px] md:text-xs font-bold px-3 py-2 rounded-xl border border-amber-400/40 shadow-xs cursor-pointer flex items-center gap-1.5 animate-pulse">
+                    <i class="fa-solid fa-code"></i> <span class="hidden sm:inline">CREDIT PROG</span>
+                </button>
+                
+                <button onclick="openHelpModal()" class="bg-indigo-700 hover:bg-indigo-600 dark:bg-slate-800 dark:hover:bg-slate-700 text-white dark:text-indigo-400 text-xs font-bold p-2 w-9 h-9 flex items-center justify-center rounded-xl border border-indigo-500/30 dark:border-slate-700 shadow-xs cursor-pointer transition-colors" title="Pusat Bantuan">
+                    <i class="fa-solid fa-circle-question text-sm"></i>
+                </button>
+                
+                <button onclick="toggleTheme()" class="bg-teal-700 dark:bg-slate-800 hover:bg-teal-50 dark:hover:bg-slate-700 text-white dark:text-teal-400 border border-teal-500/20 dark:border-slate-700 transition-all cursor-pointer shadow-xs p-2 w-9 h-9 flex items-center justify-center rounded-xl" title="Ubah Tema">
+                    <span id="theme-icon">🌙</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <div class="container mx-auto px-4 py-6 flex-1 flex flex-col lg:flex-row gap-6 relative z-10">
+        <!-- Sidebar -->
+        <aside class="w-full lg:w-72 shrink-0 lg:sticky lg:top-[120px] lg:h-[calc(100vh-10rem)] bg-white/95 dark:bg-slate-900/85 backdrop-blur-md rounded-2xl p-4 shadow-md border border-slate-200 dark:border-slate-800 static-glow flex flex-col justify-between order-2 lg:order-1 transition-all">
+            <div>
+                <h2 class="text-xs font-bold text-teal-600 dark:text-teal-400 uppercase tracking-wider mb-3 flex items-center justify-between">
+                    <span class="flex items-center gap-1"><i class="fa-solid fa-list text-amber-500"></i> Indeks Doa</span>
+                    <span class="text-[10px] bg-teal-50 dark:bg-slate-800 px-2 py-0.5 rounded text-teal-600 dark:text-teal-400 font-mono-tech border border-teal-200 dark:border-slate-700" id="doa-counter">0/0</span>
+                </h2>
+                <div id="sidebar-menu" class="space-y-1 h-60 lg:h-[calc(100vh-15rem)] overflow-y-auto custom-scroll pr-1">
+                    <div class="text-center py-4 text-slate-400 text-xs animate-pulse">Menyusun indeks doa...</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="flex-1 order-1 lg:order-2 min-w-0 flex flex-col gap-5 static-glow bg-transparent rounded-2xl">
+            <!-- Grid View (Beranda) -->
+            <section id="doa-list-section" class="relative">
+                <div class="relative w-full">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-400">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                    <input type="text" id="search-input" placeholder="Cari nama doa (contoh: Belajar, Orang Tua, Selamat)..." 
+                        class="w-full pl-12 p-4 rounded-xl bg-white/95 dark:bg-slate-900/85 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-sm focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-400 focus:outline-none transition-all text-slate-900 dark:text-white font-medium text-sm sm:text-base"
+                        oninput="filterDoa()">
+                </div>
+                <!-- Penggunaan Grid yang Responsif -->
+                <div id="doa-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 hidden mt-4"></div>
+            </section>
+
+            <!-- Doa Detail -->
+            <section id="doa-detail-section" class="hidden">
+                <button onclick="showDoaList()" class="mb-5 flex items-center gap-2 text-teal-600 dark:text-teal-400 font-semibold hover:underline cursor-pointer text-sm bg-white/95 dark:bg-slate-900/85 py-2 px-4 rounded-xl shadow-xs border border-slate-200 dark:border-slate-800 w-fit backdrop-blur-md transition-all">
+                    <i class="fa-solid fa-chevron-left text-xs"></i> Kembali ke Indeks
+                </button>
+                <div id="doa-container" class="space-y-4"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Screensaver Berjalan -->
+    <div id="islamicScreensaver" class="hidden fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center overflow-hidden font-sans select-none transition-all duration-500 opacity-0">
+        <button onclick="deactivateScreensaver()" class="absolute top-6 right-6 z-50 bg-slate-900/80 hover:bg-red-900/80 text-slate-400 hover:text-red-400 border border-slate-700 hover:border-red-500 px-4 py-2 rounded-xl text-xs font-mono-tech transition-all flex items-center gap-2 backdrop-blur-sm cursor-pointer shadow-lg">
+            <i class="fa-solid fa-power-off"></i> Tutup
+        </button>
+
+        <div class="z-10 text-center px-4 w-full flex flex-col items-center relative mt-4">
+            <h2 class="font-arabic text-4xl sm:text-6xl md:text-8xl text-yellow-400 mb-4 sm:mb-6 animate-gold-glow" dir="rtl">الدعاء مخ العبادة</h2>
+            <h3 class="font-sans font-bold text-lg sm:text-3xl text-emerald-400 mb-6 sm:mb-8" style="text-shadow: 0 0 12px rgba(16,185,129,0.7);">DOA DIGITAL PRO</h3>
+            
+            <div id="scClockDisplay" class="text-5xl sm:text-7xl md:text-9xl font-black font-mono-tech tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-fuchsia-400 to-emerald-400 filter drop-shadow-[0_0_20px_rgba(34,211,238,0.6)]">00:00:00</div>
+            <div id="scDateDisplay" class="text-[10px] sm:text-sm md:text-base font-mono-tech text-teal-300 tracking-widest uppercase mt-4 border border-cyan-500/50 px-6 py-2.5 sm:px-8 sm:py-3 rounded-full bg-slate-900/80 backdrop-blur-md shadow-[0_0_20px_rgba(6,182,212,0.3)]">Memuat Kalender...</div>
+            
+            <div class="mt-8 sm:mt-10 max-w-4xl w-[95%] border border-teal-500/30 rounded-2xl p-5 sm:p-8 bg-slate-900/60 backdrop-blur-md shadow-[0_0_20px_rgba(20,184,166,0.15)] relative animate-cyber-glow overflow-hidden min-h-[200px] flex flex-col justify-center">
+                <div id="screensaverDoaWrapper" class="transition-opacity duration-1000 ease-in-out opacity-100">
+                    <p id="screensaverDoaNama" class="text-emerald-400 font-mono-tech text-xs sm:text-sm font-bold mb-4 border-b border-teal-500/30 pb-2 inline-block">Memuat Doa...</p>
+                    <p id="screensaverDoaArab" class="font-arabic text-2xl sm:text-4xl lg:text-5xl text-yellow-400 mb-4" style="line-height: 2.2;" dir="rtl"></p>
+                    <p id="screensaverDoaArti" class="text-slate-200 text-xs sm:text-sm lg:text-base italic leading-relaxed"></p>
+                </div>
+            </div>
+
+            <div class="mt-10 sm:mt-12 text-slate-400 font-mono-tech text-[9px] sm:text-[11px] tracking-[0.2em] sm:tracking-[0.3em] uppercase animate-pulse px-4">
+                <i class="fa-solid fa-keyboard mr-1"></i> Klik atau Gerakkan Kursor untuk Kembali
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="helpModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[10005] flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border-2 border-teal-500 p-5 sm:p-6 rounded-2xl max-w-3xl w-full flex flex-col gap-4 max-h-[90vh] overflow-hidden shadow-2xl relative">
+            <div class="flex justify-between items-center border-b-2 border-slate-800 pb-3 select-none shrink-0 mt-2 sm:mt-0">
+                <h3 class="font-mono-tech text-sm sm:text-base font-black text-teal-400 uppercase tracking-wide flex items-center gap-2">
+                    <i class="fa-solid fa-circle-info text-yellow-400"></i> Pusat Bantuan Fitur Aplikasi
+                </h3>
+                <button onclick="closeHelpModal()" class="absolute top-4 right-4 sm:static text-slate-400 hover:text-red-400 p-1 cursor-pointer transition-colors"><i class="fa-solid fa-xmark text-xl sm:text-2xl"></i></button>
+            </div>
+            <div class="overflow-y-auto custom-scroll space-y-4 sm:space-y-6 pr-2 font-sans text-[13px] sm:text-sm text-slate-300 pb-4">
+                <div class="bg-slate-950/80 p-4 rounded-xl border border-teal-500/30">
+                    <h4 class="text-teal-400 font-bold mb-2 font-mono-tech"><i class="fa-solid fa-database"></i> Database Super Lengkap</h4>
+                    <p class="text-xs sm:text-sm">Database doa otomatis menggabungkan: Koleksi Doa Harian PMB, <b>Doa dari Al-Qur'an (Rabbana) & Nabi</b>, <b>API eQuran.id</b>, <b>Muslim API Vercel</b>, serta <b>GitHub Gist</b>. Tersedia lengkap mulai dari doa belajar hingga doa keselamatan dunia akhirat.</p>
+                </div>
+                <div class="bg-slate-950/80 p-4 rounded-xl border border-blue-400/30">
+                    <h4 class="text-blue-400 font-bold mb-2 font-mono-tech"><i class="fa-solid fa-robot"></i> AI Copilot & Pencarian Web Cerdas</h4>
+                    <p class="text-xs sm:text-sm">Gunakan Chatbot untuk bertanya. Jika data yang Anda cari tidak ada di dalam ribuan database lokal/API, AI akan otomatis mencarikan ringkasan dari <b>Wikipedia</b>, <b>Google Search</b>, dan <b>Copilot AI</b> beserta tautan sumber resminya.</p>
+                </div>
+                <div class="bg-slate-950/80 p-4 rounded-xl border border-yellow-500/30">
+                    <h4 class="text-yellow-400 font-bold mb-2 font-mono-tech"><i class="fa-solid fa-share-nodes"></i> Fitur Bagikan (Share) & Unduh Gambar</h4>
+                    <p class="text-xs sm:text-sm">Buka detail suatu doa, lalu gunakan panel tombol di atas teks Arab. Anda dapat membagikan teks langsung ke WhatsApp, Facebook, X/Twitter, atau menggunakan ikon Gambar untuk membuat tangkapan layar dengan kustomisasi latar belakang.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Creator Modal (Data Programmer) -->
+    <div id="creatorModal" class="fixed inset-0 z-[10005] hidden bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-[#0b1224] border-2 border-yellow-500 rounded-2xl w-full max-w-md p-5 sm:p-6 shadow-2xl relative select-none animate-gold-glow-box">
+            <button onclick="closeCreatorModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors cursor-pointer z-10"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <div class="font-mono-tech flex flex-col items-center text-center mt-3 sm:mt-0">
+                <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-yellow-500 bg-slate-900/60 flex items-center justify-center mb-3 shadow-[0_0_15px_rgba(234,179,8,0.2)]">
+                    <i class="fa-solid fa-user-astronaut text-yellow-500 text-xl sm:text-2xl"></i>
+                </div>
+                <h3 class="text-yellow-400 text-lg sm:text-xl font-extrabold tracking-wide uppercase font-mono-tech filter drop-shadow-[0_0_4px_rgba(234,179,8,0.5)]">MOHAMAD HARTADI (ADI)</h3>
+                <p class="text-slate-400 text-[10px] sm:text-[11px] tracking-wide font-sans mt-0.5 mb-4 sm:mb-5">Geotechnical & Hydraulic Lead System Architecture</p>
+                
+                <div class="w-full bg-[#070b16] border border-slate-800/80 rounded-xl p-4 text-left space-y-3 sm:space-y-4">
+                    <div class="flex items-start gap-3 group">
+                        <div class="text-blue-500 mt-1"><i class="fa-brands fa-facebook text-xl sm:text-2xl"></i></div>
+                        <div class="flex-1">
+                            <span class="text-slate-500 block text-[8px] sm:text-[9px] font-bold tracking-widest uppercase font-sans">PROFIL FACEBOOK RESMI</span>
+                            <a href="https://web.facebook.com/m.hartadi/" target="_blank" class="text-cyan-400 hover:text-cyan-300 font-bold text-xs sm:text-sm underline break-all">facebook.com/m.hartadi/</a>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3 group">
+                        <div class="text-amber-500 mt-1"><i class="fa-solid fa-globe text-lg sm:text-xl"></i></div>
+                        <div class="flex-1">
+                            <span class="text-slate-500 block text-[8px] sm:text-[9px] font-bold tracking-widest uppercase font-sans">PLATFORM BLOG RESMI</span>
+                            <a href="https://newbieonline7.blogspot.com/" target="_blank" class="text-amber-400 hover:text-amber-300 font-bold text-xs sm:text-sm underline break-all tracking-wide">newbieonline7.blogspot.com</a>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3 group">
+                        <div class="text-emerald-500 mt-1"><i class="fa-brands fa-whatsapp text-xl sm:text-2xl"></i></div>
+                        <div class="flex-1">
+                            <span class="text-slate-500 block text-[8px] sm:text-[9px] font-bold tracking-widest uppercase font-sans">KONTAK WHATSAPP</span>
+                            <a href="https://wa.me/6282231036047" target="_blank" class="text-emerald-400 font-bold text-xs sm:text-sm underline">082231036047</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Modal (Fitur Gambar Canvas) -->
+    <div id="shareModal" class="fixed inset-0 z-[10010] hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-900 border-2 border-teal-500 rounded-2xl w-full max-w-2xl p-5 sm:p-6 shadow-2xl relative flex flex-col max-h-[90vh] overflow-hidden">
+            <button onclick="closeShareModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors cursor-pointer z-10"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 class="text-teal-400 text-lg font-bold font-mono-tech mb-4 flex items-center gap-2"><i class="fa-solid fa-share-nodes"></i> Unduh / Bagikan Gambar Doa</h3>
+            
+            <div class="flex flex-col md:flex-row gap-6 overflow-y-auto custom-scroll pr-2 pb-2">
+                <div class="w-full md:w-1/3 flex flex-col gap-4 font-sans text-sm text-slate-300">
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <span class="block text-xs font-bold text-slate-400 mb-2 font-mono-tech">KONTEN TEKS</span>
+                        <label class="flex items-center gap-2 mb-2 cursor-pointer hover:text-teal-400 transition-colors">
+                            <input type="radio" name="shareOption" value="both" checked onchange="updateSharePreview()" class="accent-teal-500"> Arab & Terjemah
+                        </label>
+                        <label class="flex items-center gap-2 mb-2 cursor-pointer hover:text-teal-400 transition-colors">
+                            <input type="radio" name="shareOption" value="ayat" onchange="updateSharePreview()" class="accent-teal-500"> Hanya Arab
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer hover:text-teal-400 transition-colors">
+                            <input type="radio" name="shareOption" value="terjemah" onchange="updateSharePreview()" class="accent-teal-500"> Hanya Terjemah
+                        </label>
+                    </div>
+
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <span class="block text-xs font-bold text-slate-400 mb-2 font-mono-tech">BACKGROUND GAMBAR</span>
+                        <input type="file" id="bgImageUpload" accept="image/*" onchange="handleBgUpload(event)" class="block w-full text-xs text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-teal-900 file:text-teal-300 hover:file:bg-teal-800 cursor-pointer">
+                        <button onclick="removeBgImage()" class="mt-2 text-[10px] text-red-400 hover:text-red-300 cursor-pointer hidden" id="btnRemoveBg"><i class="fa-solid fa-trash mr-1"></i> Hapus Gambar</button>
+                    </div>
+
+                    <button onclick="downloadShareImage()" class="w-full bg-teal-600 hover:bg-teal-500 text-white font-bold py-3 text-sm rounded-xl transition-colors shadow-lg mt-auto flex items-center justify-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-download"></i> Unduh Gambar
+                    </button>
+                </div>
+
+                <div class="w-full md:w-2/3 bg-slate-950 border border-slate-800 rounded-xl flex items-center justify-center overflow-hidden relative min-h-[300px]">
+                    <span class="absolute top-2 left-2 text-[10px] text-slate-500 font-mono-tech z-20">PRATINJAU GAMBAR</span>
+                    
+                    <div id="shareCanvasArea" class="w-full max-w-[500px] bg-slate-900 relative p-8 flex flex-col justify-center min-h-[400px] overflow-hidden" style="background-size: cover; background-position: center;">
+                        <div id="shareOverlay" class="absolute inset-0 bg-slate-900/80 hidden z-0"></div>
+                        
+                        <div class="relative z-10 flex flex-col gap-4 text-center">
+                            <span id="shareSurahInfo" class="text-teal-400 font-mono-tech text-xs font-bold tracking-widest border-b border-teal-500/30 pb-2 mx-auto inline-block">Nama Doa</span>
+                            
+                            <p id="shareAyatText" class="font-arabic text-3xl md:text-4xl text-slate-50 py-2" style="line-height: 2.2;" dir="rtl"></p>
+                            
+                            <p id="shareTerjemahText" class="text-sm md:text-base text-slate-300 italic leading-relaxed"></p>
+                        </div>
+                        
+                        <div class="relative z-10 mt-8 pt-5 border-t border-slate-500/50 flex flex-col items-center justify-center w-full text-center bg-slate-900/40 rounded-xl p-3 backdrop-blur-sm">
+                            <span class="text-yellow-400 font-mono-tech text-[12px] font-black uppercase tracking-widest drop-shadow-md">Doa Digital Pro</span>
+                            <span class="text-slate-200 font-mono-tech text-[10px] tracking-wider mt-0.5 drop-shadow-md">Cyber Islamic Edition</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Window (Sistem AI Copilot) -->
+    <div id="chatWindow" class="w-[90vw] sm:w-96 h-[400px] sm:h-[460px] bg-slate-900 border-2 border-slate-700 rounded-2xl flex flex-col overflow-hidden hidden transition-all duration-300 shadow-2xl fixed bottom-28 sm:bottom-32 right-4 static-glow z-[60]">
+        <div class="bg-gradient-to-r from-slate-950 to-teal-950 p-2 sm:p-3 border-b border-slate-800 flex flex-col gap-1.5 select-none relative">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-hands-praying text-yellow-400 text-[10px] sm:text-xs animate-pulse"></i>
+                    <h4 class="font-mono-tech text-[10px] sm:text-xs font-black text-slate-300">HYDROBOT ASSISTANT</h4>
+                </div>
+                <button onclick="toggleChatWindow()" class="text-slate-400 hover:text-white cursor-pointer text-xs p-1"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="flex flex-col sm:flex-row justify-between items-center bg-slate-950/90 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl border border-teal-500/40 font-mono-tech gap-1 shadow-inner mt-2">
+                <span id="chat-top-day" class="text-slate-200 text-[10px] sm:text-[11px] font-bold tracking-wide">Memuat Hari...</span>
+                <span id="chat-top-clock" class="text-xs sm:text-sm font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-300 to-emerald-400 filter drop-shadow-[0_0_8px_rgba(34,211,238,0.4)]">00:00:00</span>
+            </div>
+        </div>
+        
+        <div id="chatMessages" class="flex-1 p-2.5 sm:p-3 overflow-y-auto space-y-3 font-mono-tech text-[11px] sm:text-xs text-slate-200 bg-slate-950 custom-scroll relative">
+            <div id="chat-welcome-msg" class="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800/80 leading-relaxed">
+                <span class="text-yellow-400 block font-bold mb-1">&gt;_ SISTEM DIGITAL AKTIF:</span>
+                Assalamualaikum! Silakan ketik langsung **nama doa** (contoh: Makan, Tidur) untuk mencari di database, atau tanyakan apa saja kepada AI Copilot.
+            </div>
+        </div>
+
+        <div id="chat-suggestions" class="hidden mx-2 p-1 bg-slate-950 border border-slate-800 rounded-lg max-h-24 overflow-y-auto custom-scroll font-mono-tech text-[10px] sm:text-[11px] space-y-0.5 z-50"></div>
+
+        <div class="p-2 bg-slate-900 border-t border-slate-800 flex gap-1.5 overflow-x-auto custom-scroll shrink-0">
+            <button onclick="triggerChatShortcut('help')" class="whitespace-nowrap px-2 py-1 bg-slate-950 hover:bg-emerald-950 text-emerald-400 text-[9px] sm:text-[10px] rounded border border-emerald-900 font-bold cursor-pointer"><i class="fa-solid fa-circle-question mr-1"></i> Help System</button>
+            <button onclick="triggerChatShortcut('cari_doa')" class="whitespace-nowrap px-2 py-1 bg-slate-950 hover:bg-blue-950 text-blue-400 text-[9px] sm:text-[10px] rounded border border-blue-900 font-bold cursor-pointer"><i class="fa-solid fa-magnifying-glass mr-1"></i> Cari Doa / Surah</button>
+            <button onclick="triggerChatShortcut('programmer')" class="whitespace-nowrap px-2 py-1 bg-fuchsia-950 hover:bg-fuchsia-900 text-fuchsia-400 text-[9px] sm:text-[10px] rounded border border-fuchsia-800 font-black cursor-pointer"><i class="fa-solid fa-code mr-1"></i> Data Programmer</button>
+            <button onclick="triggerChatShortcut('my_aplikasi')" class="whitespace-nowrap px-2 py-1 bg-slate-950 hover:bg-amber-950 text-amber-400 text-[9px] sm:text-[10px] rounded border border-amber-900 font-bold cursor-pointer"><i class="fa-solid fa-layer-group mr-1"></i> My Aplikasi</button>
+        </div>
+
+        <div class="p-2 bg-slate-900 border-t border-slate-800 flex gap-1.5">
+            <button id="chatMicBtn" onclick="toggleVoice()" class="bg-slate-800 hover:bg-slate-700 text-teal-400 px-3 rounded-lg text-xs cursor-pointer transition-all shadow-inner" title="Perintah Suara"><i class="fa-solid fa-microphone"></i></button>
+            <input type="text" id="chatInput" oninput="showChatInputSuggestions()" onkeydown="if(event.key==='Enter') processChatMessage()" placeholder="Ketik nama doa, surah, asmaul husna..." class="flex-1 bg-slate-950 border border-slate-700 rounded-lg p-2 text-[11px] sm:text-xs text-white focus:outline-none focus:border-cyan-400 font-mono-tech transition-all">
+            <button onclick="processChatMessage()" class="bg-teal-700 hover:bg-teal-600 text-white px-3 sm:px-4 rounded-lg text-xs font-bold cursor-pointer flex items-center justify-center"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- Floating Bottom Controls Container -->
+    <div class="fixed bottom-16 sm:bottom-20 right-4 z-50 flex items-center gap-2 sm:gap-2.5 flex-row-reverse">
+        <button onclick="toggleAllFloatingButtons()" id="btnToggleFloating" class="bg-slate-800 border border-slate-600 w-10 h-10 sm:w-11 sm:h-11 rounded-full shadow-lg flex items-center justify-center text-slate-400 hover:text-white cursor-pointer z-[60] transition-transform active:scale-90" title="Hide/Unhide Menu">
+            <i class="fa-solid fa-angles-right text-sm" id="iconToggleFloating"></i>
+        </button>
+
+        <div id="floatingButtonsWrapper" class="flex flex-row-reverse items-center gap-2 sm:gap-2.5 transition-all duration-300">
+            <!-- Tombol Chatbot -->
+            <button onclick="toggleChatWindow()" class="bg-slate-950 hover:bg-slate-900 border-2 border-yellow-500 w-11 h-11 sm:w-12 sm:h-12 rounded-full shadow-lg flex items-center justify-center text-lg sm:text-xl cursor-pointer transition-transform active:scale-90" title="Buka Asisten Chat Muslim">
+                <div class="relative flex items-center justify-center text-yellow-500">
+                    <i class="fa-solid fa-comment-sms text-sm sm:text-base absolute -top-1 -right-1 opacity-40"></i>
+                    <i class="fa-solid fa-user-astronaut text-xs sm:text-sm"></i>
+                </div>
+            </button>
+            
+            <!-- Tombol Screensaver Monitor -->
+            <button onclick="activateScreensaver()" class="bg-slate-900 hover:bg-slate-800 border border-emerald-500/80 w-10 h-10 sm:w-11 sm:h-11 rounded-full shadow-lg flex items-center justify-center text-emerald-400 cursor-pointer hover:scale-105 transition-transform" title="Aktifkan Screensaver">
+                <i class="fa-solid fa-desktop text-[11px] sm:text-sm"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="w-full fixed bottom-0 left-0 text-center py-3 sm:py-4 text-slate-600 dark:text-slate-400 text-[10px] sm:text-xs border-t border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-950/90 backdrop-blur-md font-mono-tech transition-colors z-40">
+        <p>&copy; 2026 Doa Harian Digital Pro - Mohamad Hartadi (Newbie AI)</p>
+    </footer>
+
+    <script>
+        // Data Global
+        let allDoaData = [];
+        let currentShareData = null; 
+        
+        // URL Data Gist
+        const GIST_API_URL = 'https://gist.githubusercontent.com/autotrof/172eb06313bebaefbc88ec1b04da4fef/raw/';
+        // URL API eQuran.id
+        const EQURAN_DOA_API = 'https://equran.nos.wjv-1.neo.id/api/v2/doa';
+        const EQURAN_SURAH_API = 'https://equran.nos.wjv-1.neo.id/api/v2/surat';
+        // URL API Muslim Vercel
+        const MUSLIM_API_ASMAUL_HUSNA = 'https://muslim-api-three.vercel.app/api/asmaulhusna';
+        const MUSLIM_API_DOA = 'https://muslim-api-three.vercel.app/api/doa';
+
+        // TATA SUARA TTS & VOICE RECOGNITION 
+        const synth = window.speechSynthesis;
+        let botVoice = null;
+        let recognizing = false;
+
+        function loadVoices() {
+            const availableVoices = synth.getVoices();
+            botVoice = availableVoices.find(v => (v.name.includes('Indonesian') || v.name.includes('ID') || v.name.includes('Female'))) || availableVoices[0];
+        }
+        if (synth.onvoiceschanged !== undefined) { synth.onvoiceschanged = loadVoices; }
+        loadVoices();
+
+        function speakBot(text) {
+            if (!synth) return;
+            synth.cancel(); 
+            const cleanText = text.replace(/\*/g, '').replace(/_/g, '').replace(/<[^>]*>?/gm, '');
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            if (botVoice) utterance.voice = botVoice;
+            utterance.rate = 1.0;
+            utterance.pitch = 1.05;
+            synth.speak(utterance);
+        }
+
+        // DATABASE INTERNAL KOMPREHENSIF (Termasuk Doa Keseharian PMB & Doa Al-Quran/Nabi)
+        const internalDoaDatabase = [
+            // --- DOA DARI AL-QUR'AN & NABI ---
+            { id: "q1", nama: "Doa Nabi Adam (Mohon Ampunan)", arab: "رَبَّنَا ظَلَمْنَا أَنفُسَنَا وَإِن لَّمْ تَغْفِرْ لَنَا وَتَرْحَمْنَا لَنَكُونَنَّ مِنَ الْخَاسِرِينَ", latin: "Rabbanaa zhalamnaa anfusanaa wa in lam taghfir lanaa wa tarhamnaa lanakuunanna minal khaasiriin", arti: "Ya Tuhan kami, kami telah menganiaya diri kami sendiri, dan jika Engkau tidak mengampuni kami dan memberi rahmat kepada kami, niscaya pastilah kami termasuk orang-orang yang merugi. (QS. Al-A'raf: 23)" },
+            { id: "q2", nama: "Doa Nabi Nuh (Keselamatan dari Orang Zalim)", arab: "رَبِّ انصُرْنِي بِمَا كَذَّبُونِ", latin: "Rabbin shurnii bimaa kadzdzabuun", arti: "Ya Tuhanku, tolonglah aku, karena mereka mendustakan aku. (QS. Al-Mu'minun: 26)" },
+            { id: "q3", nama: "Doa Nabi Ibrahim (Keturunan yang Saleh)", arab: "رَبِّ هَبْ لِي مِنَ الصَّالِحِينَ", latin: "Rabbi hab lii minash shaalihiin", arti: "Ya Tuhanku, anugerahkanlah kepadaku (seorang anak) yang termasuk orang-orang yang saleh. (QS. As-Saffat: 100)" },
+            { id: "q4", nama: "Doa Nabi Yunus (Saat Kesulitan/Kesedihan)", arab: "لَّا إِلَهَ إِلَّا أَنتَ سُبْحَانَكَ إِنِّي كُنتُ مِنَ الظَّالِمِينَ", latin: "Laa ilaaha illaa anta subhaanaka innii kuntu minazh zhaalimiin", arti: "Tidak ada Tuhan (yang berhak disembah) selain Engkau. Maha Suci Engkau, sesungguhnya aku adalah termasuk orang-orang yang zalim. (QS. Al-Anbiya: 87)" },
+            { id: "q5", nama: "Doa Nabi Ayyub (Mohon Kesembuhan Penyakit)", arab: "أَنِّي مَسَّنِيَ الضُّرُّ وَأَنتَ أَرْحَمُ الرَّاحِمِينَ", latin: "Annii massaniyadh dhurru wa anta arhamur raahimiin", arti: "Ya Tuhanku, sesungguhnya aku telah ditimpa penyakit dan Engkau adalah Tuhan Yang Maha Penyayang di antara semua penyayang. (QS. Al-Anbiya: 83)" },
+            { id: "q6", nama: "Doa Nabi Musa (Kelapangan Hati & Kelancaran Lisan)", arab: "رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي وَاحْلُلْ عُقْدَةً مِّن لِّسَانِي يَفْقَهُوا قَوْلِي", latin: "Rabbisy rahlii shadrii wa yassir lii amrii wahlul 'uqdatam mil lisaanii yafqahuu qaulii", arti: "Ya Tuhanku, lapangkanlah untukku dadaku, dan mudahkanlah untukku urusanku, dan lepaskanlah kekakuan dari lidahku, supaya mereka mengerti perkataanku. (QS. Thaha: 25-28)" },
+            { id: "q7", nama: "Doa Nabi Luth (Keselamatan dari Orang Jahat)", arab: "رَبِّ انصُرْنِي عَلَى الْقَوْمِ الْمُفْسِدِينَ", latin: "Rabbin shurnii 'alal qaumil mufsidiin", arti: "Ya Tuhanku, tolonglah aku (dengan menimpakan azab) atas kaum yang berbuat kerusakan itu. (QS. Al-Ankabut: 30)" },
+            { id: "q8", nama: "Doa Nabi Yusuf (Wafat dalam Keadaan Islam)", arab: "فَاطِرَ السَّمَاوَاتِ وَالْأَرْضِ أَنتَ وَلِيِّي فِي الدُّنْيَا وَالْآخِرَةِ ۖ تَوَفَّنِي مُسْلِمًا وَأَلْحِقْنِي بِالصَّالِحِينَ", latin: "Faathiras samaawaati wal ardhi anta waliyyii fid dunyaa wal aakhirati, tawaffanii muslimaw wa alhiqnii bish shaalihiin", arti: "Pencipta langit dan bumi. Engkaulah Pelindungku di dunia dan di akhirat, wafatkanlah aku dalam keadaan Islam dan gabungkanlah aku dengan orang-orang yang saleh. (QS. Yusuf: 101)" },
+            { id: "q9", nama: "Doa Nabi Sulaiman (Mensyukuri Nikmat)", arab: "رَبِّ أَوْزِعْنِي أَنْ أَشْكُرَ نِعْمَتَكَ الَّتِي أَنْعَمْتَ عَلَيَّ وَعَلَى وَالِدَيَّ وَأَنْ أَعْمَلَ صَالِحًا تَرْضَاهُ وَأَدْخِلْنِي بِرَحْمَتِكَ فِي عِبَادِكَ الصَّالِحِينَ", latin: "Rabbi auzi'nii an asykura ni'matakal latii an'amta 'alayya wa 'alaa waalidayya wa an a'mala shaalihan tardhaahu wa adkhilnii birahmatika fii 'ibaadikash shaalihiin", arti: "Ya Tuhanku, berilah aku ilham untuk tetap mensyukuri nikmat-Mu yang telah Engkau anugerahkan kepadaku dan kepada dua orang ibu bapakku... (QS. An-Naml: 19)" },
+            { id: "q10", nama: "Doa Nabi Zakariya (Memohon Keturunan yang Baik)", arab: "رَبِّ هَبْ لِي مِن لَّدُنكَ ذُرِّيَّةً طَيِّبَةً ۖ إِنَّكَ سَمِيعُ الدُّعَاءِ", latin: "Rabbi hab lii mil ladunka dzurriyyatan thayyibah, innaka samii'ud du'aa'", arti: "Ya Tuhanku, berilah aku dari sisi Engkau seorang anak yang baik. Sesungguhnya Engkau Maha Pendengar doa. (QS. Ali 'Imran: 38)" },
+            { id: "q11", nama: "Doa Sapu Jagad (Kebaikan Dunia Akhirat)", arab: "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ", latin: "Rabbanaa aatinaa fid dunyaa hasanah wa fil aakhirati hasanah wa qinaa 'adzaaban naar", arti: "Ya Tuhan kami, berilah kami kebaikan di dunia dan kebaikan di akhirat dan peliharalah kami dari siksa api neraka. (QS. Al-Baqarah: 201)" },
+            { id: "q12", nama: "Doa Keteguhan Hati & Rahmat", arab: "رَبَّنَا لَا تُزِغْ قُلُوبَنَا بَعْدَ إِذْ هَدَيْتَنَا وَهَبْ لَنَا مِن لَّدُنكَ رَحْمَةً ۚ إِنَّكَ أَنتَ الْوَهَّابُ", latin: "Rabbanaa laa tuzigh quluubanaa ba'da idz hadaitanaa wahab lanaa mil ladunka rahmah, innaka antal wahhaab", arti: "Ya Tuhan kami, janganlah Engkau jadikan hati kami condong kepada kesesatan sesudah Engkau beri petunjuk kepada kami. (QS. Ali 'Imran: 8)" },
+            { id: "q13", nama: "Doa Keluarga Bahagia (Qurrata A'yun)", arab: "رَبَّنَا هَبْ لَنَا مِنْ أَزْوَاجِنَا وَذُرِّيَّاتِنَا قُرَّةَ أَعْيُنٍ وَاجْعَلْنَا لِلْمُتَّقِينَ إِمَامًا", latin: "Rabbanaa hab lanaa min azwaajinaa wa dzurriyyatinaa qurrata a'yuniw waj'alnaa lil muttaqiina imaamaa", arti: "Ya Tuhan kami, anugerahkanlah kepada kami isteri-isteri kami dan keturunan kami sebagai penyenang hati (kami), dan jadikanlah kami imam bagi orang-orang yang bertakwa. (QS. Al-Furqan: 74)" },
+            
+            // --- DOA KESEHARIAN (PMB) ---
+            { id: "i1", nama: "Doa Sebelum Makan", arab: "اللَّهُمَّ بَارِكْ لَنَا فِيمَا رَزَقْتَنَا وَقِنَا عَذَابَ النَّارِ", latin: "Allahumma baarik lanaa fiimaa rozaqtanaa wa qinaa 'adzaaban naar", arti: "Ya Allah, berkahilah kami dalam rezeki yang telah Engkau berikan kepada kami dan peliharalah kami dari siksa neraka." },
+            { id: "i2", nama: "Doa Sesudah Makan", arab: "الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا وَسَقَانَا وَجَعَلَنَا مُسْلِمِينَ", latin: "Alhamdulillahilladzi ath'amanaa wa saqoonaa wa ja'alanaa muslimiin", arti: "Segala puji bagi Allah yang telah memberi kami makan dan minum serta menjadikan kami orang muslim." },
+            { id: "i3", nama: "Doa Sebelum Tidur", arab: "بِاسْمِكَ اللَّهُمَّ أَحْيَا وَبِاسْمِكَ أَمُوتُ", latin: "Bismikallahumma ahyaa wa bismika amuut", arti: "Dengan nama-Mu ya Allah aku hidup, dan dengan nama-Mu aku mati." },
+            { id: "i4", nama: "Doa Bangun Tidur", arab: "الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ", latin: "Alhamdulillahilladzi ahyaanaa ba'da maa amaatanaa wa ilaihin nusyuur", arti: "Segala puji bagi Allah, yang telah membangunkan kami setelah menidurkan kami, dan kepada-Nya lah kami dibangkitkan." },
+            { id: "i5", nama: "Doa Masuk Kamar Mandi (WC)", arab: "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْخُبُثِ وَالْخَبَائِثِ", latin: "Allahumma inni a'uudzubika minal khubutsi wal khobaa'its", arti: "Ya Allah, aku berlindung kepada-Mu dari godaan setan laki-laki dan setan perempuan." },
+            { id: "i6", nama: "Doa Keluar Kamar Mandi (WC)", arab: "غُفْرَانَكَ الْحَمْدُ لِلَّهِ الَّذِي أَذْهَبَ عَنِّي الْأَذَى وَعَافَانِي", latin: "Ghuufraanaka. Alhamdulillahilladzi adzhaba 'annil adzaa wa'aafaanii", arti: "Aku memohon ampunan-Mu. Segala puji bagi Allah yang telah menghilangkan kotoran dari diriku dan memberiku kesehatan." },
+            { id: "i7", nama: "Doa Berpakaian / Memakai Baju", arab: "الْحَمْدُ لِلَّهِ الَّذِي كَسَانِي هَذَا الثَّوْبَ وَرَزَقَنِيهِ مِنْ غَيْرِ حَوْلٍ مِنِّي وَلَا قُوَّةٍ", latin: "Alhamdulillahilladzi kasaanii hadzats tsauba wa rozaqoniihi min ghoiri haulin minnii wa laa quwwatin", arti: "Segala puji bagi Allah yang memberi aku pakaian ini dan memberi rezeki kepadaku tanpa daya dan kekuatan dariku." },
+            { id: "i8", nama: "Doa Melepas Pakaian", arab: "بِسْمِ اللهِ الَّذِيْ لَا إِلَهَ إِلَّا هُوَ", latin: "Bismillaahil ladzii laa ilaaha illaa huwa", arti: "Dengan nama Allah yang tiada Tuhan selain-Nya." },
+            { id: "i9", nama: "Doa Bercermin", arab: "اللَّهُمَّ كَمَا حَسَّنْتَ خَلْقِي فَحَسِّنْ خُلُقِي", latin: "Allahumma kamaa hassanta kholqii fahassin khuluqii", arti: "Ya Allah, sebagaimana Engkau telah membaguskan penciptaanku, maka baguskanlah akhlakku." },
+            { id: "i10", nama: "Doa Keluar Rumah", arab: "بِسْمِ اللَّهِ تَوَكَّلْتُ عَلَى اللَّهِ لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ", latin: "Bismillaahi tawakkaltu 'alallaah, laa hawla wa laa quwwata illaa billaah", arti: "Dengan nama Allah, aku bertawakal kepada Allah, tiada daya dan kekuatan kecuali dengan pertolongan Allah." },
+            { id: "i11", nama: "Doa Masuk Rumah", arab: "بِسْمِ اللَّهِ وَلَجْنَا، وَبِسْمِ اللَّهِ خَرَجْنَا، وَعَلَى رَبِّنَا تَوَكَّلْنَا", latin: "Bismillaahi walajnaa wa bismillaahi khorojnaa wa 'ala robbinaa tawakkalnaa", arti: "Dengan nama Allah, kami masuk (ke rumah), dengan nama Allah, kami keluar (darinya) dan kepada Tuhan kami, kami bertawakal." },
+            { id: "i12", nama: "Doa Berjalan Menuju Masjid", arab: "اللَّهُمَّ اجْعَلْ فِي قَلْبِي نُورًا، وَفِي لِسَانِي نُورًا، وَاجْعَلْ فِي سَمْعِي نُورًا، وَاجْعَلْ فِي بَصَرِي نُورًا", latin: "Allahummaj'al fii qalbii nuuran, wa fii lisaanii nuuran, waj'al fii sam'ii nuuran, waj'al fii basharii nuuran", arti: "Ya Allah, jadikanlah cahaya di hatiku, cahaya di lidahku, cahaya di pendengaranku, dan cahaya di penglihatanku." },
+            { id: "i13", nama: "Doa Masuk Masjid", arab: "اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ", latin: "Allahummaftah lii abwaaba rahmatik", arti: "Ya Allah, bukakanlah untukku pintu-pintu rahmat-Mu." },
+            { id: "i14", nama: "Doa Keluar Masjid", arab: "اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنْ فَضْلِكَ", latin: "Allahumma inni as-aluka min fadhlik", arti: "Ya Allah, sesungguhnya aku memohon karunia-Mu." },
+            { id: "i15", nama: "Doa Sesudah Wudhu", arab: "أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ. اللَّهُمَّ اجْعَلْنِي مِنَ التَّوَّابِينَ، وَاجْعَلْنِي مِنَ الْمُتَطَهِّرِينَ", latin: "Asyhadu an laa ilaaha illallaah wahdahu laa syariika lah, wa asyhadu anna muhammadan 'abduhu wa rasuuluh. Allahummaj'alnii minat tawwaabiina, waj'alnii minal mutathahhiriin", arti: "Aku bersaksi bahwa tiada Tuhan selain Allah Yang Maha Esa, tiada sekutu bagi-Nya. Dan aku bersaksi bahwa Muhammad adalah hamba dan utusan-Nya. Ya Allah, jadikanlah aku termasuk orang-orang yang bertaubat dan orang-orang yang bersuci." },
+            { id: "i16", nama: "Doa Sebelum Belajar", arab: "رَبِّ زِدْنِي عِلْمًا وَارْزُقْنِي فَهْمًا", latin: "Robbi zidnii 'ilmaa, warzuqnii fahmaa", arti: "Ya Tuhanku, tambahkanlah kepadaku ilmu dan berikanlah aku pemahaman yang baik." },
+            { id: "i17", nama: "Doa Sesudah Belajar", arab: "اللَّهُمَّ أَرِنَا الْحَقَّ حَقًّا وَارْزُقْنَا اتِّبَاعَهُ، وَأَرِنَا الْبَاطِلَ بَاطِلًا وَارْزُقْنَا اجْتِنَابَهُ", latin: "Allahumma arinal haqqa haqqan warzuqnat tibaa'ahu, wa arinal baathila baathilan warzuqnaj tinaabahu", arti: "Ya Allah, tunjukkanlah kepada kami kebenaran itu sebagai kebenaran dan karuniakanlah kami untuk mengikutinya. Dan tunjukkanlah kepada kami kebatilan itu sebagai kebatilan dan karuniakanlah kami untuk menjauhinya." },
+            { id: "i18", nama: "Doa Untuk Kedua Orang Tua", arab: "رَبِّ اغْفِرْ لِي وَلِوَالِدَيَّ وَارْحَمْهُمَا كَمَا رَبَّيَانِي صَغِيرًا", latin: "Rabbighfir lii wa liwaalidayya warhamhumaa kamaa rabbayaanii shaghiiraa", arti: "Ya Tuhanku, ampunilah dosaku dan dosa kedua orang tuaku, dan sayangilah keduanya sebagaimana mereka menyayangiku di waktu kecil." },
+            { id: "i20", nama: "Doa Naik Kendaraan", arab: "سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ وَإِنَّا إِلَى رَبِّنَا لَمُنْقَلِبُونَ", latin: "Subhaanal ladzii sakhkhoro lanaa hadzaa wa maa kunnaa lahu muqriniin. Wa innaa ilaa robbinaa lamunqolibuun", arti: "Maha Suci Tuhan yang telah menundukkan semua ini bagi kami, padahal kami sebelumnya tidak mampu menguasainya. Dan sesungguhnya kami akan kembali kepada Tuhan kami." },
+            { id: "i21", nama: "Doa Menjenguk Orang Sakit", arab: "اللَّهُمَّ رَبَّ النَّاسِ أَذْهِبِ الْبَأْسَ اشْفِ أَنْتَ الشَّافِي لَا شَافِيَ إِلَّا أَنْتَ شِفَاءً لَا يُغَادِرُ سَقَمًا", latin: "Allahumma rabbannaasi adzhibil ba'sa isyfi antas syaafii laa syaafiya illaa anta syifaa'an laa yughaadiru saqomaa", arti: "Ya Allah, Tuhan manusia, hilangkanlah penyakit ini, sembuhkanlah, Engkaulah Maha Penyembuh, tiada kesembuhan selain dari-Mu, kesembuhan yang tidak meninggalkan penyakit." },
+            { id: "i22", nama: "Doa Saat Turun Hujan", arab: "اللَّهُمَّ صَيِّباً نَافِعاً", latin: "Allahumma shayyiban naafi'an", arti: "Ya Allah, turunkanlah hujan yang bermanfaat." },
+            { id: "i23", nama: "Doa Setelah Turun Hujan", arab: "مُطِرْنَا بِفَضْلِ اللَّهِ وَرَحْمَتِهِ", latin: "Muthirnaa bifadhlillaahi wa rahmatihi", arti: "Kita diberi hujan karena karunia dan rahmat Allah." },
+            { id: "i24", nama: "Doa Mendengar Petir", arab: "سُبْحَانَ الَّذِي يُسَبِّحُ الرَّعْدُ بِحَمْدِهِ وَالْمَلاَئِكَةُ مِنْ خِيفَتِهِ", latin: "Subhaanalladzii yusabbihur ra'du bihamdihi wal malaa-ikatu min khiifatih", arti: "Maha Suci Allah yang petir bertasbih dengan memuji-Nya, begitu juga para malaikat karena takut kepada-Nya." },
+            { id: "i25", nama: "Doa Mohon Kemudahan Urusan", arab: "رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي وَاحْلُلْ عُقْدَةً مِّن لِّسَانِي يَفْقَهُوا قَوْلِي", latin: "Rabbisy rahlii shadrii wa yassir lii amrii wahlul 'uqdatam mil lisaanii yafqahuu qaulii", arti: "Ya Tuhanku, lapangkanlah untukku dadaku, mudahkanlah untukku urusanku, lepaskanlah kekakuan lidahku, supaya mereka mengerti perkataanku." },
+            { id: "i26", nama: "Doa Tolak Bala (Bencana)", arab: "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ جَهْدِ الْبَلاَءِ، وَدَرَكِ الشَّقَاءِ، وَسُوءِ الْقَضَاءِ، وَشَمَاتَةِ الأَعْدَاءِ", latin: "Allahumma inni a'uudzubika min jahdil balaa', wa darakisy syaqaa', wa suu-il qadhaa', wa syamaatatil a'daa'", arti: "Ya Allah, aku berlindung kepada-Mu dari beratnya cobaan, kebinasaan, takdir yang buruk, dan kegembiraan musuh atas musibahku." },
+            { id: "i27", nama: "Doa Kafaratul Majelis (Penutup Majelis)", arab: "سُبْحَانَكَ اللَّهُمَّ وَبِحَمْدِكَ، أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا أَنْتَ، أَسْتَغْفِرُكَ وَأَتُوبُ إِلَيْكَ", latin: "Subhaanakallahumma wa bihamdika, asyhadu an laa ilaaha illaa anta, astaghfiruka wa atuubu ilaik", arti: "Maha Suci Engkau ya Allah, dan dengan memuji-Mu. Aku bersaksi bahwa tiada Tuhan selain Engkau. Aku memohon ampun dan bertaubat kepada-Mu." },
+            { id: "i28", nama: "Doa Ketetapan Hati", arab: "يَا مُقَلِّبَ الْقُلُوبِ ثَبِّتْ قَلْبِي عَلَى دِينِكَ", latin: "Yaa Muqallibal quluub tsabbit qalbii 'alaa diinik", arti: "Wahai Dzat yang membolak-balikkan hati, tetapkanlah hatiku di atas agama-Mu." },
+            { id: "i29", nama: "Doa Menjenguk Orang Sakit (Ruqyah)", arab: "بِسْمِ اللَّهِ أَرْقِيكَ مِنْ كُلِّ شَيْءٍ يُؤْذِيكَ", latin: "Bismillaahi arqiika min kulli syai-in yu'dziika", arti: "Dengan nama Allah aku meruqyahmu dari segala sesuatu yang menyakitimu." },
+            { id: "i30", nama: "Sayyidul Istighfar (Penghulu Istighfar)", arab: "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ خَلَقْتَنِي وَأَنَا عَبْدُكَ وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ وَأَبُوءُ لَكَ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ", latin: "Allahumma anta rabbii laa ilaaha illaa anta, khalaqtanii wa ana 'abduka, wa ana 'alaa 'ahdika wa wa'dika mas tatha'tu. A'uudzu bika min syarri maa shana'tu. Abuu-u laka bini'matika 'alayya wa abuu-u laka bidzanbii faghfirlii fa innahu laa yaghfirudz dzunuuba illaa anta", arti: "Ya Allah, Engkaulah Tuhanku... ampunilah aku. Karena sungguh tiada yang dapat mengampuni dosa selain Engkau." }
+        ];
+
+        function updateDateTime() {
+            const sekarang = new Date();
+            const daysArr = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+            const monthsArr = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+            
+            const dayStr = `${daysArr[sekarang.getDay()]}, ${sekarang.getDate().toString().padStart(2, '0')} ${monthsArr[sekarang.getMonth()]} ${sekarang.getFullYear()}`;
+            const timeStr = `${sekarang.getHours().toString().padStart(2, '0')}:${sekarang.getMinutes().toString().padStart(2, '0')}:${sekarang.getSeconds().toString().padStart(2, '0')}`;
+            
+            const idsText = ['loader-date', 'dashboard-date', 'chat-top-day'];
+            idsText.forEach(id => { const el = document.getElementById(id); if(el) el.innerText = dayStr; });
+
+            const idsTime = ['loader-time', 'dashboard-time', 'scClockDisplay'];
+            idsTime.forEach(id => { const el = document.getElementById(id); if(el) el.innerText = timeStr; });
+            
+            const elChatClock = document.getElementById('chat-top-clock');
+            if (elChatClock) elChatClock.innerText = timeStr + " WIB";
+
+            const elScDate = document.getElementById('scDateDisplay');
+            if (elScDate) elScDate.innerText = dayStr + " | Waktu Lokal";
+        }
+        updateDateTime(); 
+        setInterval(updateDateTime, 1000);
+
+        // Fungsi Memuat Data Doa Pararel (Gist, eQuran API, Muslim API, Internal Database)
+        async function fetchDoa() {
+            const progressBar = document.getElementById('loaderProgressBar');
+            const statusText = document.getElementById('loaderStatusText');
+            
+            try {
+                progressBar.style.width = '20%';
+
+                const [gistRes, equranRes, muslimRes] = await Promise.allSettled([
+                    fetch(GIST_API_URL),
+                    fetch(EQURAN_DOA_API),
+                    fetch(MUSLIM_API_DOA)
+                ]);
+
+                let gistData = [];
+                if (gistRes.status === 'fulfilled' && gistRes.value.ok) {
+                    let data = await gistRes.value.json();
+                    if (!Array.isArray(data)) data = data.data || Object.values(data);
+                    gistData = data.map((item, index) => ({
+                        id: "g" + index,
+                        nama: item.title || item.doa || "Doa",
+                        arab: item.arabic || item.ayat || item.arab || "",
+                        latin: item.latin || "",
+                        arti: item.translation || item.artinya || item.terjemahan || ""
+                    }));
+                }
+
+                progressBar.style.width = '50%';
+
+                let equranData = [];
+                if (equranRes.status === 'fulfilled' && equranRes.value.ok) {
+                    let resJson = await equranRes.value.json();
+                    let data = resJson.data || [];
+                    equranData = data.map(item => ({
+                        id: "eq" + item.id,
+                        nama: item.doa,
+                        arab: item.ayat,
+                        latin: item.latin,
+                        arti: item.artinya
+                    }));
+                }
+                
+                progressBar.style.width = '75%';
+                
+                let muslimApiData = [];
+                if (muslimRes.status === 'fulfilled' && muslimRes.value.ok) {
+                    let resJson = await muslimRes.value.json();
+                    let data = Array.isArray(resJson) ? resJson : (resJson.data || []);
+                    muslimApiData = data.map((item, index) => ({
+                        id: "ma" + index,
+                        nama: item.doa || item.title || "Doa Tambahan",
+                        arab: item.ayat || item.arabic || "",
+                        latin: item.latin || "",
+                        arti: item.artinya || item.translation || ""
+                    }));
+                }
+
+                progressBar.style.width = '90%';
+
+                // Penggabungan Database Besar (Lebih dari ratusan doa)
+                allDoaData = [...internalDoaDatabase, ...gistData, ...equranData, ...muslimApiData];
+
+                progressBar.style.width = '100%';
+                statusText.innerText = ">_ BERHASIL MERGE DATABASE GIST, EQURAN, MUSLIM API & LOKAL";
+                finishLoad();
+
+            } catch (error) { 
+                console.warn("Kesalahan koneksi ke luar. Memuat database internal...");
+                allDoaData = [...internalDoaDatabase];
+                progressBar.style.width = '100%';
+                statusText.innerText = ">_ MEMUAT DATABASE LOKAL (OFFLINE MODE PMB)";
+                setTimeout(finishLoad, 1000);
+            }
+        }
+
+        function finishLoad() {
+            // Mencegah duplikasi data jika ada nama yang identik
+            const uniqueDoaData = [];
+            const seenNames = new Set();
+            allDoaData.forEach(doa => {
+                const cleanName = doa.nama.toLowerCase().trim();
+                if(!seenNames.has(cleanName) && cleanName.length > 0) {
+                    seenNames.add(cleanName);
+                    uniqueDoaData.push(doa);
+                }
+            });
+            allDoaData = uniqueDoaData;
+
+            setTimeout(() => {
+                document.getElementById('globalAppLoader').classList.add('opacity-0', 'hidden');
+                document.getElementById('doa-grid').classList.remove('hidden');
+                renderDoaList(allDoaData);
+                renderSidebarMenu(allDoaData);
+                document.getElementById('doa-counter').innerText = `${allDoaData.length} Doa Terhimpun`;
+
+                const hour = new Date().getHours();
+                let greetingStr = "Assalamualaikum, selamat malam";
+                if (hour >= 4 && hour < 11) greetingStr = "Assalamualaikum, selamat pagi";
+                else if (hour >= 11 && hour < 15) greetingStr = "Assalamualaikum, selamat siang";
+                else if (hour >= 15 && hour < 18) greetingStr = "Assalamualaikum, selamat sore";
+
+                setTimeout(() => { speakBot(`${greetingStr}. Sistem Doa Digital Pro Cyber Edition, siap digunakan.`); }, 1000);
+            }, 800);
+        }
+
+        function renderDoaList(data) {
+            const grid = document.getElementById('doa-grid');
+            grid.innerHTML = '';
+            data.forEach((doa, index) => {
+                let badgeHtml = '';
+                if(String(doa.id).startsWith('q')) badgeHtml = `<span class="bg-indigo-900 text-indigo-300 border border-indigo-500 text-[8px] sm:text-[9px] px-1.5 py-0.5 rounded font-bold font-mono-tech mt-1 inline-block"><i class="fa-solid fa-book-open"></i> Al-Qur'an & Nabi</span>`;
+                else if(String(doa.id).startsWith('i')) badgeHtml = `<span class="bg-blue-900 text-blue-300 border border-blue-500 text-[8px] sm:text-[9px] px-1.5 py-0.5 rounded font-bold font-mono-tech mt-1 inline-block"><i class="fa-solid fa-bookmark"></i> Doa Harian</span>`;
+                else if(String(doa.id).startsWith('g')) badgeHtml = `<span class="bg-slate-800 text-slate-300 border border-slate-500 text-[8px] sm:text-[9px] px-1.5 py-0.5 rounded font-bold font-mono-tech mt-1 inline-block"><i class="fa-brands fa-github"></i> Gist DB</span>`;
+                else if(String(doa.id).startsWith('eq')) badgeHtml = `<span class="bg-emerald-900 text-emerald-300 border border-emerald-500 text-[8px] sm:text-[9px] px-1.5 py-0.5 rounded font-bold font-mono-tech mt-1 inline-block"><i class="fa-solid fa-book-quran"></i> eQuran API</span>`;
+                else if(String(doa.id).startsWith('ma')) badgeHtml = `<span class="bg-purple-900 text-purple-300 border border-purple-500 text-[8px] sm:text-[9px] px-1.5 py-0.5 rounded font-bold font-mono-tech mt-1 inline-block"><i class="fa-solid fa-database"></i> Muslim API</span>`;
+
+                const card = document.createElement('div');
+                card.className = 'bg-white/95 dark:bg-slate-900/85 backdrop-blur-md p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-teal-500 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(20,184,166,0.5)] transition-all duration-300 cursor-pointer shadow-sm flex flex-col justify-between';
+                card.setAttribute('onclick', `openDoa('${doa.id}')`);
+                card.innerHTML = `
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 bg-teal-50 dark:bg-slate-800 text-teal-700 dark:text-teal-400 font-bold flex items-center justify-center rounded-xl text-sm shrink-0 shadow-inner mt-1">
+                            ${index + 1}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="font-bold text-slate-800 dark:text-slate-100 text-sm sm:text-base leading-tight">${doa.nama}</h3>
+                            ${badgeHtml}
+                            <p class="text-[10px] sm:text-xs text-slate-400 dark:text-slate-500 italic mt-1.5 truncate-2-lines">${doa.arti}</p>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-slate-300 dark:text-slate-700 self-center"></i>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderSidebarMenu(data) {
+            const sidebar = document.getElementById('sidebar-menu');
+            sidebar.innerHTML = '';
+            data.forEach((doa, index) => {
+                const button = document.createElement('button');
+                button.className = 'w-full text-left px-3 py-2.5 rounded-xl text-xs transition-all bg-slate-50/80 dark:bg-slate-900/50 text-slate-700 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 border border-transparent mb-1';
+                button.setAttribute('onclick', `openDoa('${doa.id}')`);
+                button.innerHTML = `<span class="truncate pr-2"><b class="text-teal-500 dark:text-teal-400 mr-1.5 font-mono-tech text-[10px]">${index + 1}.</b> ${doa.nama}</span>`;
+                sidebar.appendChild(button);
+            });
+        }
+
+        function filterDoa() {
+            const query = document.getElementById('search-input').value.toLowerCase().trim();
+            if(!query) { renderDoaList(allDoaData); return; }
+            const filtered = allDoaData.filter(doa => doa.nama.toLowerCase().includes(query) || doa.arti.toLowerCase().includes(query));
+            renderDoaList(filtered);
+        }
+
+        function openDoa(id) {
+            const doa = allDoaData.find(d => String(d.id) === String(id));
+            if (!doa) return;
+
+            document.getElementById('doa-list-section').classList.add('hidden');
+            document.getElementById('doa-detail-section').classList.remove('hidden');
+            
+            const container = document.getElementById('doa-container');
+            const safeAr = doa.arab.replace(/'/g, "\\\'").replace(/"/g, "&quot;");
+            const safeId = doa.arti.replace(/'/g, "\\\'").replace(/"/g, "&quot;");
+
+            container.innerHTML = `
+                <div class="bg-gradient-to-br from-teal-600/90 to-emerald-700/90 dark:from-slate-900/90 dark:to-teal-950/90 backdrop-blur-md text-white p-6 rounded-2xl shadow-lg mb-5 text-center border border-teal-500/30 relative overflow-hidden animate-gold-glow-box">
+                    <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')] opacity-10"></div>
+                    <h3 class="text-xl md:text-3xl font-bold mb-2 relative z-10 px-2 drop-shadow-lg">${doa.nama}</h3>
+                    <p class="text-[10px] sm:text-xs text-teal-200 uppercase tracking-widest font-mono-tech relative z-10">Kumpulan Doa Digital Pro</p>
+                </div>
+
+                <div class="bg-white/95 dark:bg-slate-900/85 backdrop-blur-md p-6 sm:p-8 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col gap-5 shadow-sm">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-200 dark:border-slate-800/80 pb-3 mb-1 gap-3 relative z-20">
+                        <span class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded-md border border-slate-200 dark:border-slate-700 shrink-0">
+                            Fitur Bagikan
+                        </span>
+                        
+                        <div class="flex items-center gap-1 w-full sm:w-auto justify-end sm:justify-start">
+                            <button onclick="shareToWhatsApp('${safeAr}', '${safeId}', '${doa.nama}')" class="text-slate-400 hover:text-green-500 p-1.5 transition-colors cursor-pointer" title="Bagikan ke WhatsApp">
+                                <i class="fa-brands fa-whatsapp text-base sm:text-lg"></i>
+                            </button>
+                            <button onclick="shareToFacebook('${safeAr}', '${safeId}', '${doa.nama}')" class="text-slate-400 hover:text-blue-500 p-1.5 transition-colors cursor-pointer" title="Bagikan ke Facebook">
+                                <i class="fa-brands fa-facebook text-base sm:text-lg"></i>
+                            </button>
+                            <button onclick="shareToTwitter('${safeAr}', '${safeId}', '${doa.nama}')" class="text-slate-400 hover:text-sky-400 p-1.5 transition-colors cursor-pointer" title="Bagikan ke X/Twitter">
+                                <i class="fa-brands fa-x-twitter text-base sm:text-lg"></i>
+                            </button>
+                            <button onclick="copyToClipboard('${safeAr}', '${safeId}', '${doa.nama}')" class="text-slate-400 hover:text-emerald-500 p-1.5 transition-colors cursor-pointer" title="Salin Doa">
+                                <i class="fa-regular fa-copy text-base sm:text-lg"></i>
+                            </button>
+                            <div class="w-px h-4 bg-slate-200 dark:bg-slate-700 mx-1"></div>
+                            <button onclick="openShareModal('${doa.id}')" class="bg-teal-50 dark:bg-slate-800 hover:bg-teal-600 dark:hover:bg-teal-500 text-teal-600 dark:text-teal-400 hover:text-white dark:hover:text-slate-100 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg text-[10px] sm:text-xs font-bold shadow-xs border border-teal-200 dark:border-slate-700 transition-all cursor-pointer flex items-center gap-1.5" title="Buat Gambar Doa">
+                                <i class="fa-solid fa-image"></i> <span class="hidden sm:inline">Gambar</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="text-right pt-2 pb-2">
+                        <p class="font-arabic text-3xl md:text-4xl lg:text-5xl text-slate-900 dark:text-yellow-400 mb-6 selection:bg-teal-500/30" style="line-height: 2.2;" dir="rtl">${doa.arab}</p>
+                    </div>
+                    
+                    <div class="border-t border-slate-200 dark:border-slate-700/80 pt-5 space-y-4">
+                        <div>
+                            <span class="bg-teal-100 text-teal-800 dark:bg-slate-800 dark:text-teal-400 text-[10px] font-bold px-2 py-1 rounded font-mono-tech uppercase">Latin</span>
+                            <p class="text-sm md:text-base text-slate-600 dark:text-slate-300 italic mt-2 leading-relaxed font-semibold">${doa.latin}</p>
+                        </div>
+                        <div>
+                            <span class="bg-indigo-100 text-indigo-800 dark:bg-slate-800 dark:text-indigo-400 text-[10px] font-bold px-2 py-1 rounded font-mono-tech uppercase">Artinya</span>
+                            <p class="text-sm md:text-base text-slate-800 dark:text-slate-200 mt-2 leading-relaxed">${doa.arti}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showDoaList() {
+            document.getElementById('doa-detail-section').classList.add('hidden');
+            document.getElementById('doa-list-section').classList.remove('hidden');
+        }
+
+        // --- SISTEM SCREENSAVER ---
+        let scInterval;
+        let scDoaIndex = 0;
+
+        function changeScreensaverDoa() {
+            if(allDoaData.length === 0) return;
+            const doa = allDoaData[scDoaIndex];
+            const wrapper = document.getElementById('screensaverDoaWrapper');
+            
+            wrapper.style.opacity = '0'; 
+            
+            setTimeout(() => {
+                document.getElementById('screensaverDoaNama').innerText = doa.nama;
+                document.getElementById('screensaverDoaArab').innerText = doa.arab;
+                document.getElementById('screensaverDoaArti').innerText = doa.arti;
+                wrapper.style.opacity = '1'; 
+            }, 1000);
+            
+            scDoaIndex++;
+            if(scDoaIndex >= allDoaData.length) scDoaIndex = 0;
+        }
+
+        function activateScreensaver(event) {
+            if(event) event.stopPropagation();
+            const el = document.getElementById('islamicScreensaver');
+            el.classList.remove('hidden');
+            
+            const earth = document.getElementById('earth-3d-bg');
+            earth.classList.remove('opacity-15', 'dark:opacity-30', 'z-[-1]');
+            earth.classList.add('opacity-80', 'dark:opacity-90', 'z-[9998]');
+            
+            changeScreensaverDoa(); 
+            clearInterval(scInterval);
+            scInterval = setInterval(changeScreensaverDoa, 15000);
+
+            setTimeout(() => { el.classList.remove('opacity-0'); el.classList.add('opacity-100'); }, 30);
+        }
+
+        function deactivateScreensaver() {
+            clearInterval(scInterval);
+            const el = document.getElementById('islamicScreensaver');
+            el.classList.remove('opacity-100'); el.classList.add('opacity-0');
+            
+            const earth = document.getElementById('earth-3d-bg');
+            earth.classList.add('opacity-15', 'dark:opacity-30', 'z-[-1]');
+            earth.classList.remove('opacity-80', 'dark:opacity-90', 'z-[9998]');
+            
+            setTimeout(() => el.classList.add('hidden'), 500);
+        }
+
+        // --- MANAJEMEN PREVIEW & EXPORT FITUR BAGIKAN (SHARE MODAL) ---
+        function openShareModal(doaId) {
+            const doa = allDoaData.find(d => String(d.id) === String(doaId));
+            if(!doa) return;
+
+            currentShareData = {
+                namaDoa: doa.nama,
+                teksArab: doa.arab,
+                teksTerjemah: doa.arti
+            };
+
+            document.querySelector('input[name="shareOption"][value="both"]').checked = true;
+            removeBgImage();
+            updateSharePreview();
+            document.getElementById('shareModal').classList.remove('hidden');
+        }
+
+        function closeShareModal() { document.getElementById('shareModal').classList.add('hidden'); }
+
+        function updateSharePreview() {
+            if(!currentShareData) return;
+            const option = document.querySelector('input[name="shareOption"]:checked').value;
+            const elArab = document.getElementById('shareAyatText');
+            const elTerjemah = document.getElementById('shareTerjemahText');
+            
+            document.getElementById('shareSurahInfo').innerText = currentShareData.namaDoa;
+            elArab.innerHTML = currentShareData.teksArab;
+            elTerjemah.innerText = currentShareData.teksTerjemah;
+
+            if (option === 'ayat') { elArab.style.display = 'block'; elTerjemah.style.display = 'none'; } 
+            else if (option === 'terjemah') { elArab.style.display = 'none'; elTerjemah.style.display = 'block'; } 
+            else { elArab.style.display = 'block'; elTerjemah.style.display = 'block'; }
+        }
+
+        function handleBgUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const canvasArea = document.getElementById('shareCanvasArea');
+                    canvasArea.style.backgroundImage = `url(${e.target.result})`;
+                    document.getElementById('shareOverlay').classList.remove('hidden');
+                    document.getElementById('btnRemoveBg').classList.remove('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeBgImage() {
+            const canvasArea = document.getElementById('shareCanvasArea');
+            canvasArea.style.backgroundImage = 'none';
+            document.getElementById('shareOverlay').classList.add('hidden');
+            document.getElementById('btnRemoveBg').classList.add('hidden');
+            document.getElementById('bgImageUpload').value = '';
+        }
+
+        function downloadShareImage() {
+            const canvasArea = document.getElementById('shareCanvasArea');
+            const originalBorderRadius = canvasArea.style.borderRadius;
+            canvasArea.style.borderRadius = '0px'; 
+            html2canvas(canvasArea, {
+                scale: 2, backgroundColor: '#0f172a', useCORS: true, allowTaint: true, foreignObjectRendering: false, logging: false
+            }).then(canvas => {
+                canvasArea.style.borderRadius = originalBorderRadius;
+                try {
+                    const link = document.createElement('a');
+                    link.download = `Doa_${currentShareData.namaDoa.replace(/\s+/g, '_')}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                } catch (saveError) {
+                    alert("Gagal memproses konversi gambar secara langsung. Silakan ambil screenshot area pratinjau.");
+                }
+            }).catch(err => {
+                canvasArea.style.borderRadius = originalBorderRadius;
+                alert("Sistem web browser Anda mendeteksi batasan memori atau tidak mendukung fungsionalitas rendering canvas.");
+            });
+        }
+
+        function formatShareText(arab, arti, doaNama) {
+            const linkAplikasi = 'https://adikds.github.io/Al-Quran-Karim/'; 
+            const teksLengkap = `${doaNama}\n\n${arab}\n\nArtinya: "${arti}"\n\nBaca Doa & Al-Qur'an lengkap di Digital Pro:\n${linkAplikasi}`;
+            return encodeURIComponent(teksLengkap);
+        }
+
+        function shareToWhatsApp(arab, arti, doaNama) {
+            const teks = formatShareText(arab, arti, doaNama);
+            const url = `https://api.whatsapp.com/send?text=${teks}`;
+            window.open(url, '_blank');
+        }
+
+        function shareToFacebook(arab, arti, doaNama) {
+            const linkAplikasi = 'https://adikds.github.io/Al-Quran-Karim/';
+            const teksLengkap = `${doaNama}:\n${arab}\n\nArtinya: "${arti}"\n\n- Dibagikan via Doa Digital Pro`;
+            const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(linkAplikasi)}&quote=${encodeURIComponent(teksLengkap)}`;
+            window.open(fbUrl, '_blank', 'width=600,height=400,noopener,noreferrer');
+        }
+
+        function shareToTwitter(arab, arti, doaNama) {
+            const linkAplikasi = 'https://adikds.github.io/Al-Quran-Karim/';
+            const teksLengkap = `${doaNama}\n${arab}\nArtinya: "${arti}"\n\nApp: ${linkAplikasi}`;
+            const teksMaksimal = teksLengkap.length > 240 ? teksLengkap.substring(0, 240) + "..." : teksLengkap;
+            const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(teksMaksimal)}`;
+            window.open(url, '_blank');
+        }
+
+        function copyToClipboard(arab, arti, doaNama) {
+            const linkAplikasi = 'https://adikds.github.io/Al-Quran-Karim/';
+            const teksLengkap = `${doaNama}\n\n${arab}\n\nArtinya: "${arti}"\n\nDibagikan melalui Doa Digital Pro: ${linkAplikasi}`;
+            navigator.clipboard.writeText(teksLengkap).then(() => {
+                alert(`Teks ${doaNama} berhasil disalin ke clipboard!`);
+            }).catch(err => {
+                console.error('Gagal menyalin teks: ', err);
+            });
+        }
+
+
+        // ==========================================
+        // SISTEM CHATBOT AI (EQURAN.ID SURAH, MUSLIM API, WIKI, GOOGLE & COPILOT LINK INTEGRATION)
+        // ==========================================
+        const apps = [
+            {u:"https://adikds.github.io/jarvis-ai/",i:"fa-robot",n:"JARVIS AI"},
+            {u:"https://adikds.github.io/edu-market-pro/",i:"fa-graduation-cap",n:"EduMarket Pro"},
+            {u:"https://adikds.github.io/iptv-terminal/",i:"fa-tv",n:"IPTV Terminal"},
+            {u:"https://adikds.github.io/TV-streaming-live/",i:"fa-signal",n:"TV Streaming Live"},
+            {u:"https://adikds.github.io/Al-Quran-Karim/",i:"fa-book-quran",n:"Al-Quran Karim"},
+            {u:"https://adikds.github.io/-MEGA-ATLAS-FKG/",i:"fa-tooth",n:"Mega Atlas FKG"},
+            {u:"https://adikds.github.io/SISTEM-MONITORING-SEISMIK-PERINGATAN-TSUNAMI/",i:"fa-wave-square",n:"Tsunami Alert"},
+            {u:"https://adikds.github.io/MONITORING-PREDIKSI-STATUS-EI-NI-O-LA-NI-A/",i:"fa-temperature-half",n:"El Nino La Nina"},
+            {u:"https://adikds.github.io/MONITORING-PREDIKSI-ANGIN-MUSON-INDONESIA/",i:"fa-wind",n:"Angin Muson"},
+            {u:"https://adikds.github.io/INTEGRATED-DAM-ANALYTICS-ASSESSMENT-SYSTEM/",i:"fa-water",n:"Dam Analytics"},
+            {u:"https://adikds.github.io/WAY-APU-DAM/",i:"fa-building-shield",n:"Way Apu Dam"},
+            {u:"https://adikds.github.io/EVENT-DRIVEN-ARCHITECTURE-FOR-AI-AGENTS/",i:"fa-sitemap",n:"EDA AI Agents"},
+            {u:"https://adikds.github.io/GeoStructPro-15-Essential-Geotechnical-Formulas/",i:"fa-mountain",n:"GeoStructPro 15"},
+            {u:"https://adikds.github.io/GEOSTRUCT-PRO-20-FORMULA-GEOTECHNICAL/",i:"fa-layer-group",n:"GeoStruct Pro 20"},
+            {u:"https://adikds.github.io/UNIFIED-SOIL-CLASSIFICATION-SYSTEM/",i:"fa-cubes",n:"USCS Soil"},
+            {u:"https://adikds.github.io/AERORADAR-PRO/",i:"fa-plane",n:"AeroRadar Pro"},
+            {u:"https://adikds.github.io/HYDRACANAL-PRO-GEOMETRIC-DESIGN/",i:"fa-water-ladder",n:"HydraCanal Pro"},
+            {u:"https://adikds.github.io/financial-planner/",i:"fa-chart-line",n:"Financial Planner"},
+            {u:"https://adikds.github.io/business-suite/",i:"fa-chart-bar",n:"Business Suite"},
+            {u:"https://adikds.github.io/stock-manager/",i:"fa-boxes-stacked",n:"Stock Manager"},
+            {u:"https://adikds.github.io/Aplikasi_Point_of_Sale_-POS-_atau_sistem_kasir/",i:"fa-cash-register",n:"POS Terminal Pro"},
+            {u:"https://adikds.github.io/KEUANGANKU/",i:"fa-cash-register",n:"Keuanganku"},
+            {u:"https://adikds.github.io/DARUSSYIFA-MEDIKA/",i: "fa-hospital",n:"DARUSSYIFA"},
+            {u:"https://adikds.github.io/SKIN_SYIFA_AI/",i: "fa-magnifying-glass-chart",n:"SKIN SYIFA"},
+            {u:"https://adikds.github.io/NEURO-PSYCH_AI/",i: "fa-brain",n:"NEURO-PSYCH"},
+            {u:"https://adikds.github.io/SMILE-SYIFA-AI/",i: "fa-face-smile",n:"SMILE SYIFA"},
+            {u:"https://adikds.github.io/DOKTER-AI/",i: "fa-user-doctor",n:"DOKTER AI"},
+            {u: "https://www.f15library.com/", i: "fa-book-open-reader",n: "F15 Library"},
+            {u: "https://adikds.github.io/ATLAS-GEOTEKNIK/", i: "fa-earth-americas",n: "Geotechnical"},
+            {u: "https://adikds.github.io/STATISTICS_for_ENGINEERS-/", i: "fa-chart-pie",n: "Stats Engineers"},
+            {u: "https://famelack.com/radio/id", i: "fa-radio", n: "Radio Online"},
+            {u: "https://famelack.com/tv/id", i: "fa-tv",n: "TV Famelack"},
+            {u: "https://adikds.github.io/Mega-Atlas-Kedokteran-Neurologi-Bedah-Syaraf/", i: "fa-brain",n: "Neurology"},
+            {u: "https://adikds.github.io/Adi_Newbie/", i: "fa-user-astronaut",n: "Adi Newbie" },
+            {u: "https://adikds.github.io/-Doa-Digital-Pro/", i: "fa-hands-praying", n: "Kumpulan Doa Digital Pro"},
+            {u: "https://adikds.github.io/AASHTO-SOIL-CLASSIFIER/", i: "fa-road", n: "AASHTO Soil"},
+            {u: "https://adikds.github.io/APEX-Foundations-v3.1-Geotechnical-AI-/", i: "fa-foundation", n: " APN FOUNDATIONS "},
+            {u: "https://adikds.github.io/ANALISIS-PONDASI-TELAPAK-/", i: "fa-foundation", n: " APN FOUNDATIONS "}
+        ];
+
+        function toggleChatWindow() { document.getElementById('chatWindow').classList.toggle('hidden'); }
+        function toggleAllFloatingButtons() {
+            const wrapper = document.getElementById('floatingButtonsWrapper');
+            const icon = document.getElementById('iconToggleFloating');
+            
+            if (wrapper.classList.contains('hidden')) {
+                wrapper.classList.remove('hidden');
+                wrapper.classList.add('flex');
+                icon.classList.replace('fa-angles-left', 'fa-angles-right');
+            } else {
+                wrapper.classList.add('hidden');
+                wrapper.classList.remove('flex');
+                icon.classList.replace('fa-angles-right', 'fa-angles-left');
+            }
+        }
+
+        function toggleVoice() {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                alert("Voice Recognition tidak didukung di browser ini."); return;
+            }
+            const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const rec = new SpeechRec(); 
+            rec.lang = 'id-ID';
+            
+            const micBtn = document.getElementById('chatMicBtn');
+            const chatInput = document.getElementById('chatInput');
+
+            if (!recognizing) {
+                rec.start(); 
+                recognizing = true;
+                micBtn.classList.add('mic-listening');
+                chatInput.placeholder = "Mendengarkan (Cari Asmaul Husna/Doa)...";
+                speakBot("Mendengarkan perintah suara Anda.");
+            } else {
+                rec.stop(); 
+                recognizing = false;
+                micBtn.classList.remove('mic-listening');
+                chatInput.placeholder = "Ketik nama doa, surah, atau tanya AI Copilot...";
+            }
+
+            rec.onresult = (e) => {
+                const transcript = e.results[0][0].transcript;
+                chatInput.value = transcript;
+                processChatMessage(transcript);
+            };
+            rec.onend = () => {
+                recognizing = false;
+                micBtn.classList.remove('mic-listening');
+                chatInput.placeholder = "Ketik nama doa, surah, atau tanya AI Copilot...";
+            };
+        }
+
+        function showChatInputSuggestions() {
+            const chatInput = document.getElementById('chatInput');
+            const chatSuggestionBox = document.getElementById('chat-suggestions');
+            const query = chatInput.value.toLowerCase().trim();
+
+            if(!query) { chatSuggestionBox.classList.add('hidden'); return; }
+
+            const cleanQuery = query.replace('doa', '').trim();
+            const filteredDoa = allDoaData.filter(d => 
+                d.nama.toLowerCase().includes(cleanQuery) || d.arti.toLowerCase().includes(cleanQuery)
+            );
+
+            if(filteredDoa.length > 0 && cleanQuery.length > 1) {
+                chatSuggestionBox.innerHTML = '';
+                chatSuggestionBox.classList.remove('hidden');
+
+                filteredDoa.slice(0, 3).forEach(doa => {
+                    const row = document.createElement('div');
+                    row.className = 'p-1.5 text-slate-300 hover:bg-teal-950 hover:text-teal-400 rounded cursor-pointer transition-colors border-b border-slate-900 last:border-none flex justify-between items-center';
+                    row.innerHTML = `
+                        <span>&gt; Buka: <b class="text-yellow-400">${doa.nama}</b></span>
+                        <span class="text-[8px] sm:text-[9px] text-slate-500 font-sans">Klik untuk mengisi</span>
+                    `;
+                    row.onclick = () => {
+                        chatInput.value = `buka doa ${doa.nama}`;
+                        chatSuggestionBox.classList.add('hidden');
+                        chatInput.focus();
+                    };
+                    chatSuggestionBox.appendChild(row);
+                });
+            } else { chatSuggestionBox.classList.add('hidden'); }
+        }
+
+        function triggerChatShortcut(type) {
+            if(type === 'help') {
+                insertBotReply("<strong>[HELP ADAPTIF]:</strong> Gunakan bilah menu di kiri melayang atau ketik langsung kata kunci nama doa di kolom input chat untuk mencarinya.");
+                speakBot("Ketik langsung nama doa di kolom input untuk mencarinya.");
+            } else if(type === 'programmer') {
+                let profilePayload = `
+                    <div class="bg-[#0b1224] border-2 border-yellow-500 rounded-xl p-3 text-slate-200 shadow-xl animate-gold-glow-box">
+                        <div class="flex items-center gap-2 text-yellow-500 font-extrabold font-mono-tech text-[10px] tracking-wider mb-2 uppercase">
+                            <span>&lt;/&gt;</span>
+                            <span>VERIFIED DEVELOPER CREDENTIALS:</span>
+                        </div>
+                        <strong class="text-white text-[13px] sm:text-base block font-bold tracking-wide mb-1 uppercase font-mono-tech">MOHAMAD HARTADI (ADI)</strong>
+                        <p class="text-slate-400 text-[9px] sm:text-[10px] font-sans mb-2 border-b border-slate-800 pb-1">Geotechnical & Hydraulic Lead System Architecture</p>
+                        <div class="space-y-1.5 font-sans text-[11px] sm:text-xs text-slate-300">
+                            <p>💼 <b>Profesi:</b> Geotechnical & Structural Analyst / Dev</p>
+                            <p>🌐 <b>Blog:</b> <a href="https://newbieonline7.blogspot.com/" target="_blank" class="text-amber-400 underline font-bold break-all">newbieonline7.blogspot.com</a></p>
+                            <p>🔵 <b>FB:</b> <a href="https://web.facebook.com/m.hartadi/" target="_blank" class="text-cyan-400 underline font-bold">facebook.com/m.hartadi/</a></p>
+                            <p>📱 <b>WhatsApp:</b> <a href="https://wa.me/6282231036047" target="_blank" class="text-emerald-400 font-bold underline">082231036047</a></p>
+                        </div>
+                    </div>
+                `;
+                insertBotReply(profilePayload);
+                speakBot("Memperkenalkan Bapak Mohamad Hartadi, Insinyur Geoteknik dan Pengembang Sistem Aplikasi Terintegrasi.");
+            } else if(type === 'cari_doa') {
+                insertBotReply("Ketikkan langsung kata kunci nama doa atau Surah yang Anda tuju pada kolom teks chat ini.");
+                speakBot("Silakan ketik atau sebutkan nama doa atau surat yang Anda cari.");
+            } else if(type === 'my_aplikasi') {
+                let appsHtml = '<div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">';
+                apps.forEach(app => {
+                    appsHtml += `
+                        <a href="${app.u}" target="_blank" class="flex items-center gap-2 p-2 bg-slate-900 hover:bg-slate-800 border border-teal-500/30 hover:border-teal-400 rounded-lg transition-colors text-decoration-none shadow-sm cursor-pointer">
+                            <div class="w-6 h-6 flex items-center justify-center bg-teal-950 rounded-full shrink-0 text-teal-400 text-[10px]">
+                                <i class="fa-solid ${app.i}"></i>
+                            </div>
+                            <span class="text-[9px] sm:text-[10px] font-bold text-slate-200 font-sans truncate">${app.n}</span>
+                        </a>
+                    `;
+                });
+                appsHtml += '</div>';
+                
+                let payload = `
+                    <div class="bg-[#0b1224] border border-teal-500/50 rounded-xl p-3 text-slate-200 shadow-xl mt-2">
+                        <div class="flex items-center gap-2 text-teal-400 font-bold font-mono-tech text-[10px] tracking-wider mb-1 uppercase">
+                            <i class="fa-solid fa-layer-group"></i> My Applications Directory
+                        </div>
+                        <p class="text-[9px] sm:text-[10px] text-slate-400 font-sans mb-2">Pilih aplikasi untuk membukanya di tab baru:</p>
+                        <div class="max-h-56 overflow-y-auto custom-scroll pr-1 pb-1">
+                            ${appsHtml}
+                        </div>
+                    </div>
+                `;
+                insertBotReply(payload);
+                speakBot("Menampilkan direktori aplikasi ekosistem terpadu milik Mohamad Hartadi.");
+            }
+        }
+
+        function insertAIBotReply(text) {
+            const msg = document.getElementById('chatMessages');
+            const formattedText = text
+                .replace(/\*\*(.*?)\*\*/g, '<span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-500 font-extrabold">$1</span>')
+                .replace(/\*(.*?)\*/g, '<span class="text-fuchsia-300 italic">$1</span>')
+                .replace(/\n/g, '<br>');
+            const html = `
+                <div class="relative bg-gradient-to-br from-slate-900 via-indigo-900/40 to-fuchsia-900/30 p-4 rounded-2xl rounded-tl-none border-l-4 border-l-fuchsia-500 border border-indigo-500/50 shadow-[0_0_20px_rgba(217,70,239,0.2)] mb-5 mt-4">
+                    <div class="absolute -top-3 -left-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-fuchsia-500 text-white text-[9px] sm:text-[10px] font-black px-3 py-1 rounded-md shadow-lg border border-fuchsia-300/50 uppercase tracking-widest flex items-center gap-1.5 animate-pulse">
+                        <i class="fa-solid fa-robot text-yellow-300"></i> HYDROBOT AI
+                    </div>
+                    <div class="mt-2 font-sans text-[11px] sm:text-xs text-slate-100 leading-relaxed custom-scroll">${formattedText}</div>
+                </div>
+            `;
+            msg.innerHTML += html;
+            msg.scrollTop = msg.scrollHeight;
+        }
+
+        function insertBotReply(html) {
+            const msg = document.getElementById('chatMessages');
+            msg.innerHTML += `<div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-slate-300 leading-relaxed">${html}</div>`;
+            msg.scrollTop = msg.scrollHeight;
+        }
+
+        // --- SISTEM PEMROSESAN CHAT CERDAS & WEB SEARCH (GIST, EQURAN, MUSLIM API, WIKI, GOOGLE & COPILOT) ---
+        async function processChatMessage(voiceInput = null) {
+            const el = document.getElementById('chatInput');
+            let txt = '';
+            
+            if (typeof voiceInput === 'string' && voiceInput.trim() !== '') txt = voiceInput.trim();
+            else txt = el.value.trim();
+
+            document.getElementById('chat-suggestions').classList.add('hidden'); 
+            if(!txt) return;
+            
+            const msgContainer = document.getElementById('chatMessages');
+            msgContainer.innerHTML += `
+                <div class="bg-gradient-to-l from-emerald-600 to-teal-800 p-3 rounded-2xl rounded-tr-none text-right max-w-[85%] ml-auto text-white font-bold font-mono-tech mb-4 border border-teal-400/50 shadow-[0_0_15px_rgba(16,185,129,0.3)] animate-cyber-glow">
+                    <div class="text-[8px] text-teal-200 mb-1 flex justify-end items-center gap-1">
+                        <i class="fa-solid fa-user"></i> PENGGUNA
+                    </div>
+                    ${txt}
+                </div>`;
+            msgContainer.scrollTop = msgContainer.scrollHeight;
+            
+            const textLower = txt.toLowerCase();
+            el.value = ''; 
+
+            // Cek Pencarian Profil Developer
+            if (textLower.includes('programmer') || textLower.includes('hartadi') || textLower.includes('dev') || textLower.includes('kredit')) {
+                triggerChatShortcut('programmer'); return;
+            } 
+
+            // Cek Jika Meminta Asmaul Husna (Tarik dari Muslim API Vercel)
+            if (textLower.includes('asmaul husna') || textLower.includes('asmaulhusna')) {
+                const typeApiId = 'typing-api-' + Date.now();
+                msgContainer.innerHTML += `<div id="${typeApiId}" class="text-emerald-400 font-mono-tech text-[10px] animate-pulse mb-3 mt-2 flex items-center gap-2"><i class="fa-solid fa-satellite-dish fa-spin"></i> Menarik data Asmaul Husna dari Muslim API...</div>`;
+                msgContainer.scrollTop = msgContainer.scrollHeight;
+
+                try {
+                    const res = await fetch(MUSLIM_API_ASMAUL_HUSNA);
+                    const data = await res.json();
+                    const elTypeApi = document.getElementById(typeApiId);
+                    if (elTypeApi) elTypeApi.remove();
+
+                    if (data && data.length > 0) {
+                        // Tampilkan 3 cuplikan Asmaul Husna secara acak
+                        let asmaulHtml = '';
+                        for(let i=0; i<3; i++) {
+                            const rnd = data[Math.floor(Math.random() * data.length)];
+                            asmaulHtml += `<div class="border-b border-slate-700 pb-2 mb-2 last:border-0"><span class="font-arabic text-yellow-400 text-lg">${rnd.arabic}</span><br><span class="font-bold text-teal-300 text-xs">${rnd.latin}</span><br><span class="text-[10px] text-slate-400">${rnd.translation_id}</span></div>`;
+                        }
+                        
+                        let payload = `
+                            <div class="bg-slate-900 border border-teal-500 rounded-xl p-3 shadow-md font-sans text-xs mt-2">
+                                <div class="flex justify-between items-center border-b border-slate-800 pb-1.5 mb-2">
+                                    <span class="bg-teal-950 text-teal-400 font-mono-tech font-bold px-2 py-0.5 rounded text-[10px]"><i class="fa-solid fa-list"></i> Asmaul Husna (Cuplikan)</span>
+                                </div>
+                                ${asmaulHtml}
+                                <div class="text-[9px] text-slate-500 text-center mt-2">Sumber: Muslim API Vercel</div>
+                            </div>
+                        `;
+                        insertBotReply(`**[DATA DARI MUSLIM API]**\nBerikut adalah cuplikan Asmaul Husna:${payload}`);
+                        speakBot("Menampilkan cuplikan data Asmaul Husna dari Muslim API.");
+                        return;
+                    }
+                } catch (e) {
+                    const elTypeApi = document.getElementById(typeApiId);
+                    if (elTypeApi) elTypeApi.remove();
+                }
+            }
+
+            // Cek Pencarian Surat di EQuran.id
+            if (textLower.includes('surat') || textLower.includes('surah') || textLower.includes('quran')) {
+                let querySurah = textLower.replace(/(?:buka|cari|tentang|surat|surah|quran|ayat|\d+)/gi, '').trim();
+                
+                const typeSurahId = 'typing-surah-' + Date.now();
+                msgContainer.innerHTML += `<div id="${typeSurahId}" class="text-emerald-400 font-mono-tech text-[10px] animate-pulse mb-3 mt-2 flex items-center gap-2"><i class="fa-solid fa-satellite-dish fa-spin"></i> Menghubungkan ke API EQuran.id...</div>`;
+                msgContainer.scrollTop = msgContainer.scrollHeight;
+
+                try {
+                    const surahRes = await fetch(EQURAN_SURAH_API);
+                    const surahJson = await surahRes.json();
+                    const surahList = surahJson.data;
+                    const foundSurah = surahList.find(s => s.namaLatin.toLowerCase().includes(querySurah) || s.arti.toLowerCase().includes(querySurah));
+
+                    const elTypeSurah = document.getElementById(typeSurahId);
+                    if (elTypeSurah) elTypeSurah.remove();
+
+                    if (foundSurah) {
+                        let surahCardPayload = `
+                            <div class="bg-slate-900 border border-emerald-500 rounded-xl p-3 space-y-2.5 shadow-md font-sans text-[11px] sm:text-xs mt-2">
+                                <div class="flex justify-between items-center border-b border-slate-800 pb-1.5">
+                                    <span class="bg-emerald-950 text-emerald-400 font-mono-tech font-bold px-2 py-0.5 rounded text-[9px] sm:text-[10px]"><i class="fa-solid fa-book-quran"></i> Surah ke-${foundSurah.nomor}</span>
+                                    <span class="font-arabic text-yellow-500 font-bold text-base sm:text-lg">${foundSurah.nama}</span>
+                                </div>
+                                <div>
+                                    <h5 class="text-white font-bold text-xs sm:text-sm font-mono-tech">${foundSurah.namaLatin}</h5>
+                                    <p class="text-[10px] sm:text-[11px] text-slate-400 mt-1">${foundSurah.arti} • ${foundSurah.tempatTurun} • ${foundSurah.jumlahAyat} Ayat</p>
+                                </div>
+                                <div class="pt-1 font-mono-tech w-full">
+                                    <a href="${foundSurah.audioFull['05']}" target="_blank" class="block w-full py-1.5 bg-emerald-700 hover:bg-emerald-600 text-white font-bold rounded-lg text-[9px] sm:text-[10px] cursor-pointer text-center transition-colors">
+                                        <i class="fa-solid fa-play mr-1"></i> Putar Murottal Full
+                                    </a>
+                                </div>
+                            </div>
+                        `;
+                        insertBotReply(`**[DATA DARI EQURAN.ID]**\nSaya menemukan data Surah yang Anda maksud:${surahCardPayload}`);
+                        speakBot(`Ditemukan Surah ${foundSurah.namaLatin} dengan arti ${foundSurah.arti}.`);
+                        return;
+                    }
+                } catch (e) {
+                    const elTypeSurah = document.getElementById(typeSurahId);
+                    if (elTypeSurah) elTypeSurah.remove();
+                }
+            }
+
+            // Cek Pencarian Doa dalam Database Lokal (Termasuk Gist & Muslim API)
+            const voiceCmdRegex = /buka\s+(?:doa)\s+([a-zA-Z\s]+?)$/i;
+            const match = textLower.match(voiceCmdRegex);
+            let querySearch = textLower.replace('buka', '').replace('doa', '').trim();
+            if(match) { querySearch = match[1].trim(); }
+
+            const foundDoa = allDoaData.find(s => s.nama.toLowerCase().includes(querySearch) || s.arti.toLowerCase().includes(querySearch));
+
+            if (foundDoa && querySearch.length > 2) {
+                let doaCardPayload = `
+                    <div class="bg-slate-900 border border-teal-500 rounded-xl p-3 space-y-2.5 shadow-md font-sans text-[11px] sm:text-xs">
+                        <div class="flex justify-between items-center border-b border-slate-800 pb-1.5">
+                            <span class="bg-teal-950 text-teal-400 font-mono-tech font-bold px-2 py-0.5 rounded text-[9px] sm:text-[10px]"><i class="fa-solid fa-star text-yellow-500"></i> Doa Detail</span>
+                        </div>
+                        <div>
+                            <h5 class="text-white font-bold text-xs sm:text-sm font-mono-tech">${foundDoa.nama}</h5>
+                            <p class="text-[10px] sm:text-[11px] text-slate-400 mt-1 truncate">${foundDoa.arti}</p>
+                        </div>
+                        <div class="pt-1 font-mono-tech w-full">
+                            <button onclick="openDoa('${foundDoa.id}'); toggleChatWindow();" class="w-full py-1.5 bg-teal-700 hover:bg-teal-600 text-white font-bold rounded-lg text-[9px] sm:text-[10px] cursor-pointer text-center transition-colors">
+                                <i class="fa-solid fa-book-open mr-1"></i> Buka Doa
+                            </button>
+                        </div>
+                    </div>
+                `;
+                insertBotReply(`Sistem menemukan doa: ${doaCardPayload}`);
+                speakBot(`Ditemukan. ${foundDoa.nama}. Silakan tekan tombol buka.`);
+                return;
+            }
+
+            // --- JIKA TIDAK ADA DI DATABASE DOA MAUPUN SURAH, AMBIL DARI WIKIPEDIA, GOOGLE & COPILOT AI ---
+            const typingId = 'typing-' + Date.now();
+            msgContainer.innerHTML += `
+                <div id="${typingId}" class="text-cyan-400 font-mono-tech text-[10px] animate-pulse mb-3 mt-2 flex items-center gap-2">
+                    <i class="fa-solid fa-earth-americas fa-spin"></i> Mencari ringkasan di Wikipedia, Google & Copilot AI...
+                </div>`;
+            msgContainer.scrollTop = msgContainer.scrollHeight;
+
+            const googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(txt)}`;
+            const copilotSearchUrl = `https://copilot.microsoft.com/?q=${encodeURIComponent(txt)}`;
+
+            try {
+                // Panggil API Wikipedia Bahasa Indonesia secara langsung
+                const wikiApiUrl = `https://id.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&exsentences=6&exintro=1&explaintext=1&generator=search&gsrsearch=${encodeURIComponent(txt)}&gsrlimit=1&origin=*`;
+                const wikiResp = await fetch(wikiApiUrl);
+                const wikiData = await wikiResp.json();
+                
+                const elType = document.getElementById(typingId);
+                if (elType) elType.remove();
+
+                if (wikiData.query && wikiData.query.pages) {
+                    const pages = wikiData.query.pages;
+                    const pageId = Object.keys(pages)[0];
+                    const extract = pages[pageId].extract;
+                    const pageTitle = pages[pageId].title;
+                    const wikiPageUrl = `https://id.wikipedia.org/wiki/${encodeURIComponent(pageTitle.replace(/ /g, '_'))}`;
+
+                    let replyText = `**[HASIL PENELUSURAN DETAIL WIKIPEDIA]**\n\n${extract}\n\n`;
+                    replyText += `<div class="mt-3 pt-2 border-t border-slate-800 flex flex-wrap gap-2 text-[10px]">
+                        <a href="${wikiPageUrl}" target="_blank" class="px-2 py-1 bg-cyan-950 hover:bg-cyan-900 text-cyan-300 border border-cyan-700/60 rounded font-bold underline inline-flex items-center gap-1 transition-colors">
+                            <i class="fa-solid fa-book-atlas"></i> Sumber: Wikipedia (${pageTitle})
+                        </a>
+                        <a href="${googleSearchUrl}" target="_blank" class="px-2 py-1 bg-blue-950 hover:bg-blue-900 text-blue-300 border border-blue-700/60 rounded font-bold underline inline-flex items-center gap-1 transition-colors">
+                            <i class="fa-brands fa-google"></i> Google Search
+                        </a>
+                        <a href="${copilotSearchUrl}" target="_blank" class="px-2 py-1 bg-purple-950 hover:bg-purple-900 text-purple-300 border border-purple-700/60 rounded font-bold underline inline-flex items-center gap-1 transition-colors">
+                            <i class="fa-solid fa-robot"></i> Copilot AI
+                        </a>
+                    </div>`;
+
+                    insertAIBotReply(replyText);
+                    speakBot(extract);
+                } else {
+                    let fallbackText = `Informasi spesifik tentang "**${txt}**" tidak dapat ditemukan secara langsung di database lokal doa/surah kami.\n\nNamun, Anda dapat melihat hasil pencarian lengkap dan jawaban AI terkini pada link sumber resmi di bawah ini:`;
+                    fallbackText += `<div class="mt-3 pt-2 border-t border-slate-800 flex flex-wrap gap-2 text-[10px]">
+                        <a href="https://id.wikipedia.org/w/index.php?search=${encodeURIComponent(txt)}" target="_blank" class="px-2 py-1 bg-cyan-950 hover:bg-cyan-900 text-cyan-300 border border-cyan-700/60 rounded font-bold underline inline-flex items-center gap-1 transition-colors">
+                            <i class="fa-solid fa-book-atlas"></i> Cari di Wikipedia
+                        </a>
+                        <a href="${googleSearchUrl}" target="_blank" class="px-2 py-1 bg-blue-950 hover:bg-blue-900 text-blue-300 border border-blue-700/60 rounded font-bold underline inline-flex items-center gap-1 transition-colors">
+                            <i class="fa-brands fa-google"></i> Penelusuran Google
+                        </a>
+                        <a href="${copilotSearchUrl}" target="_blank" class="px-2 py-1 bg-purple-950 hover:bg-purple-900 text-purple-300 border border-purple-700/60 rounded font-bold underline inline-flex items-center gap-1 transition-colors">
+                            <i class="fa-solid fa-robot"></i> Tanya Copilot AI
+                        </a>
+                    </div>`;
+
+                    insertAIBotReply(fallbackText);
+                    speakBot("Informasi tidak ditemukan di database. Silakan gunakan link sumber eksternal yang telah kami sediakan.");
+                }
+
+            } catch (error) {
+                const elType = document.getElementById(typingId);
+                if (elType) elType.remove();
+
+                let errText = `Maaf, koneksi pencarian otomatis terganggu.\n\nSilakan buka tautan pencarian langsung di bawah ini:`;
+                errText += `<div class="mt-3 pt-2 border-t border-slate-800 flex flex-wrap gap-2 text-[10px]">
+                    <a href="${googleSearchUrl}" target="_blank" class="px-2 py-1 bg-blue-950 text-blue-300 border border-blue-700/60 rounded font-bold underline inline-flex items-center gap-1">
+                        <i class="fa-brands fa-google"></i> Google Search
+                    </a>
+                    <a href="${copilotSearchUrl}" target="_blank" class="px-2 py-1 bg-purple-950 text-purple-300 border border-purple-700/60 rounded font-bold underline inline-flex items-center gap-1">
+                        <i class="fa-solid fa-robot"></i> Copilot AI
+                    </a>
+                </div>`;
+                insertAIBotReply(errText);
+            }
+        }
+
+        // ==========================================
+        // TEMA BUMI 3D & INISIALISASI
+        // ==========================================
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark'); icon.innerText = '🌙'; localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark'); icon.innerText = '☀️'; localStorage.setItem('theme', 'dark');
+            }
+        }
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark'); document.getElementById('theme-icon').innerText = '☀️';
+        } else { document.documentElement.classList.remove('dark'); document.getElementById('theme-icon').innerText = '🌙'; }
+
+        function openCreatorModal() { document.getElementById('creatorModal').classList.remove('hidden'); }
+        function closeCreatorModal() { document.getElementById('creatorModal').classList.add('hidden'); }
+        function openHelpModal() { document.getElementById('helpModal').classList.remove('hidden'); }
+        function closeHelpModal() { document.getElementById('helpModal').classList.add('hidden'); }
+
+        function initThreeEarth() {
+            const container = document.getElementById('earth-3d-bg');
+            if(!container) return;
+            const scene = new THREE.Scene();
+            
+            const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 10;
+            
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            container.appendChild(renderer.domElement);
+            
+            const controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.enableZoom = false; 
+            controls.enablePan = false;
+            
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+            scene.add(ambientLight);
+            const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+            dirLight.position.set(5, 3, 5);
+            scene.add(dirLight);
+            
+            const textureLoader = new THREE.TextureLoader();
+            const earthTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_atmos_2048.jpg');
+            const cloudsTexture = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_clouds_1024.png');
+            
+            const earthGeo = new THREE.SphereGeometry(3.5, 64, 64);
+            const earthMat = new THREE.MeshStandardMaterial({ map: earthTexture, roughness: 0.5 });
+            const globe = new THREE.Mesh(earthGeo, earthMat);
+            scene.add(globe);
+            
+            const cloudGeo = new THREE.SphereGeometry(3.53, 64, 64);
+            const cloudMat = new THREE.MeshStandardMaterial({ map: cloudsTexture, transparent: true, blending: THREE.AdditiveBlending, opacity: 0.8 });
+            const cloudMesh = new THREE.Mesh(cloudGeo, cloudMat);
+            scene.add(cloudMesh);
+            
+            const animate = function () {
+                requestAnimationFrame(animate);
+                globe.rotation.y += 0.0012;
+                cloudMesh.rotation.y += 0.0016;
+                controls.update();
+                renderer.render(scene, camera);
+            };
+            animate();
+            
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+
+        window.addEventListener('load', () => {
+            fetchDoa();
+            setTimeout(initThreeEarth, 1000);
+        });
+    </script>
+</body>
+</html>
